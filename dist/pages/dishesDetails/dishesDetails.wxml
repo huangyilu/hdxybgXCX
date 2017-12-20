@@ -1,0 +1,76 @@
+<!--pages/dishesDetails/dishesDetails.wxml-->
+
+<view wx:if='{{ dishes.dishesList.length > 0 }}'>
+
+<view class='body' >
+  
+  <view class='title-img'>
+     <!-- <image mode='aspectFill' src='../../images/1.jpg'></image>  -->
+  <view class='title-swiper-view'>
+    <swiper autoplay="true" bindchange='bindDishesImgSwiperChange'>
+    <block wx:for="{{ dishesImgUrls }}" wx:for-item='img' wx:key='{{ index }}'>
+      <swiper-item>
+        <image mode='aspectFill' src="{{ img.img }}" class="slide-image"/>
+      </swiper-item>
+    </block>
+    </swiper>
+  </view>
+  <view class='title-bottom-view'>{{ dishesImgUrls[dishesImgIndex].name }}</view>
+
+  </view>
+
+  <view class='title'>
+    <text>{{ dishes.name }}</text>
+    <text class='price'> ¥ {{ dishes.price }}</text>
+    <image class='comment-icon' src='../../images/comment-gray.png' bindtap='goDishesCommentPage'></image>
+  </view>
+
+  <view class='textarea-view'>
+    <view class='textTitle'>
+      <text>菜单</text>
+      <!-- <image src='../../images/edit.png' bindtap='bindEditTextTap'></image> -->
+      <!-- <text class='saveBtn' wx:if="{{ edit == 1 }}" bindtap='bindEditTextTap'>保存</text> -->
+    </view>
+
+    <block wx:for="{{ dishes.dishesList }}" wx:key="{{ index }}">
+    <view class='textContent' >
+      <text>{{ item.name }}</text>
+      <image class='delete-icon' wx:if="{{ edit == 1 }}" src='../../images/delete.png' id="{{ index }}" bindtap='bindTextDeleteTap'></image>
+    </view>
+    </block>
+
+    <view class='add-view' bindtap='bindTextAddTap'>
+      <image class='add-icon' wx:if="{{ edit == 1 }}" src='../../images/add.png'></image>
+    </view>
+
+    <view class='weui-flex save-view' wx:if="{{ edit == 1 }}">
+      <view class='weui-flex__item cancel'>取消</view>
+      <view class='weui-flex__item save' bindtap='bindEditTextTap'>保存</view>
+    </view>
+
+  </view>
+
+  <!-- 弹窗 -->
+  <view class='input-bgview' hidden='{{ inputText }}'>
+    <view class='input-view'>
+      <input bindinput='bindKeyInput' placeholder="请输入一个菜名" type="text" focus="{{ inputTextFocus }}"/>
+      <view class='weui-flex btn-view' >
+        <view class='weui-flex__item cancel-btn' bindtap='bindCancelTap'>取消</view>
+        <view class='weui-flex__item define-btn' bindtap='bindDefineTap'>添加</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 附加信息 -->
+  <view class='foot-view second-txt-color'>
+    附加信息: 可与商家联系更改菜单
+  </view>
+
+</view>
+
+<view class='join-view'>
+  <view class='join-btn' bindtap='bindJoinShoppingcarTap'>加入购物车</view>
+</view>
+
+
+</view>

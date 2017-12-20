@@ -1,0 +1,3 @@
+/* pages/dishesDetails/dishesComment.wxss */
+
+@import '../../templates/comment-item/comment-item.wxss';

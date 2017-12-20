@@ -1,0 +1,157 @@
+<!--pages/profile/myorder.wxml-->
+
+<view class="weui-tab">
+  <view class="weui-navbar">
+      <block wx:for-items="{{ navbarTabs }}" wx:key="{{ index }}">
+          <view id="{{ index }}" class="weui-navbar__item {{ activeIndex == index ? 'weui-bar__item_on' : ''}}" bindtap="navbarTabClick">
+              <view class="weui-navbar__title">{{ item }}</view>
+          </view>
+      </block>
+      <view class="weui-navbar__slider" style="left: {{ sliderLeft }}px; transform: translateX({{ sliderOffset }}px); -webkit-transform: translateX({{ sliderOffset }}px);"></view>
+  </view>
+  <view class="weui-tab__panel">
+
+    <!-- 选项一的内容 -->
+    <view class="weui-tab__content" hidden="{{ activeIndex != 0 }}" style='border-top-style:none;'>
+    
+      <block wx:for="{{ appointmentList }}" wx:for-item="appLists" wx:key="{{ index }}"  >
+      <view class='cell'>
+        <view class='cell-title'>
+          <text class='second-txt-color'>预约日期：{{ appLists.time }}</text>
+        </view>
+        <!-- 预约码 -->
+        <view class='reservation-code-view'>
+          <view class='text-view second-txt-color'>预约码： <text>{{ appLists.reservationCode }}</text></view>
+          <view class='img-view'>
+            <image mode='aspectFit' src='{{ appLists.reservationCodeImg }}'></image>
+          </view>
+        </view>
+        <!-- 预约码 -->
+        <view>
+          <block wx:for="{{ appLists.appList }}" wx:for-item="apit" wx:key="{{ index }}">
+          <view class='appointment-cell' data-title='{{ apit.title }}' bindtap='bindAppointmentTap'>
+            <image class='cellImg' src='{{ apit.imgUrl }}' mode='aspectFill'></image>
+            <view class='text'>
+              <view>{{ apit.title }}</view>
+              <view class='second-txt-color'> 
+                <text>{{ apit.name }} {{ apit.floor }}</text>
+                <text style='margin-left:30rpx;'>{{ apit.floorHeight }}</text>
+              </view>
+              <view class='price'>¥ {{ apit.price }} <text class='second-txt-color' style='float:right;'>x{{ apit.nums }}</text> </view>
+            </view>
+          </view>
+          </block>
+        </view>
+      </view>
+      </block>
+
+      <view class='remind-empty-view' wx:if='{{ appointmentList.length <= 0 }}'>暂无待付款...</view>
+
+    </view>
+    <!-- 选项一结束 -->
+    
+    <!-- 选项二的内容 -->
+    <view class="weui-tab__content" hidden="{{ activeIndex != 3 }}" style='border-top-style:none;'>
+
+      <view style='height:100%;margin-bottom:170rpx;'>
+      <block wx:for="{{ paymentList }}" wx:for-item="pay" wx:key="{{ index }}" >
+      <view class='cell'>
+        <view class='cell-title'>
+          <checkbox-group data-hisindex='{{ his.hisid }}' bindchange="bindCheckboxChange">
+            <checkbox class='checkbox' value="{{ pay.payid }}" checked="{{ pay.checked }}"/>
+            <text class='left-txt'>{{ pay.time }}</text>
+          </checkbox-group>
+        </view>
+        <view>
+          <block wx:for="{{ pay.payList }}" wx:for-item="pl" wx:key="{{ index }}" >
+          <view class='payment-cell'>
+            <image class='cellImg' src='{{ pl.imgUrl }}' mode='aspectFill'></image>
+            <view class='text'>
+              <view>{{ pl.title }}</view>
+              <view class='second-txt-color'> 
+                <text>{{ pl.name }} {{ pl.floor }}</text>
+                <text style='margin-left:30rpx;'>{{ pl.floorHeight }}</text>
+              </view>
+              <view class='price'>¥ {{ pl.price }} <text class='second-txt-color' style='float:right;'>x{{ pl.nums }}</text> </view>
+            </view>
+          </view>
+          </block>
+        </view>
+      </view>
+      </block>
+
+      </view>
+      <!-- 占位符 -->
+      <!-- <view class='empty-view'></view>
+      <view class='empty-view'></view> 
+      <view class='empty-view'></view>
+      <view class='empty-view'></view> -->
+
+      <!-- 付尾款 -->
+      <view class='weui-footer weui-footer_fixed-bottom settlement-view'>
+        <view class='weui-flex'>
+          <view class='weui-flex__item'>
+            <view class='flex-wrp'>
+              <view class='price-text flex-item'>合计：<text class='price'>¥ {{ retainagePrice }}</text></view>
+              <view class='second-txt-color deposit flex-item'>( 已付定金{{ depositPrice }}元 )</view>
+            </view>
+          </view>
+          <view>
+            <view class='settlement-btn' bindtap='bindPaymentComTap'>付尾款</view>
+          </view>
+        </view>
+      </view>
+
+    </view>
+    <!-- 选项二结束 -->
+
+    <!-- 选项三开始 -->
+    <view class="weui-tab__content" hidden="{{ activeIndex != 1 }}" style='border-top-style:none;'>
+    <block wx:for="{{ commentList }}" wx:for-item="comt" wx:key="{{ index }}" >
+    <view class='cell'>
+      <view class='cell-title'>
+        <text>{{ comt.time }}</text>
+      </view>
+      <view>
+        <block wx:for="{{ comt.payList }}" wx:for-item="pl" wx:key="{{ index }}" >
+        <view class='payment-cell'>
+          <image class='cellImg' src='{{ pl.imgUrl }}' mode='aspectFill'></image>
+          <view class='text'>
+            <view>{{ pl.title }}</view>
+            <view class='second-txt-color'> 
+              <text>{{ pl.name }} {{ pl.floor }}</text>
+              <text style='margin-left:30rpx;'>{{ pl.floorHeight }}</text>
+            </view>
+            <view class='price'>¥ {{ pl.price }} <text class='second-txt-color' style='float:right;'>x{{ pl.nums }}</text> </view>
+          </view>
+        </view>
+        </block>
+        <!-- 评价 -->
+        <view class='comment-view'>
+          <view class='weui-flex'>
+            <view class='weui-flex__item'>
+              <view class='comment-price-text'>
+                <text>共{{ comt.payList.length }}件  合计：¥ {{ comt.totalPrice }}</text>
+              </view>
+            </view>
+            <view>
+              <view class='comment-btn' id='{{ index }}' data-payid='{{ comt.payid }}' bindtap='bindCommentBtnTap'>评价</view>
+            </view>
+          </view>
+        </view>
+        <!-- 评价 end -->
+      </view>
+    </view>
+    </block>
+
+    <view class='remind-empty-view' wx:if='{{ commentList.length <= 0 }}'>暂无待评价...</view>
+
+    </view>
+    <!-- 选项三结束 -->
+
+  </view>
+</view>
+
+
+
+

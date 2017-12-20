@@ -1,0 +1,124 @@
+<!--index.wxml-->
+<import src="../../templates/scorestart/scorestart.wxml"/>
+
+<view class="body" hidden='{{ bodyHidden }}'>
+
+  <!-- 头部 -->
+  <view class='header'>
+    <image class='phone-call-icon' src='../../images/phonecall.png' data-phonenum='{{ hotelInfo.hotelphonecall }}' bindtap='bindPhoneCallTap'></image>
+    <image class='header-img' mode='aspectFill' src='{{ hotelInfo.hotelBgimg }}'></image>
+    <view class='header-text weui-flex'>
+      
+      <text>{{ hotelInfo.hotelName }}</text>
+      <view class='score-view'>
+        <text class='comment-text'>90%用户好评</text>
+        <text class='hotelscore'>{{ hotelInfo.hotelScore }}分</text>
+      </view>
+      <view class='text'>{{ hotelInfo.hotelDescription }}</view>
+    </view>
+    
+  </view>
+
+  <!-- 酒店信息 -->
+  <view class="img-title-arrow-cell" bindtap='bindLocationTap'>
+    <image class='left-icon' src='../../images/location.png'></image>
+    <text class='title'>{{ hotelInfo.hotelLocation }}</text>
+    <image class='right-icon' src='../../images/arrow-right.png'></image>
+  </view>
+
+  <!-- <view class='hotel-description img-title-text-cell' data-title='{{ hotelInfo.hotelName }}' data-content='{{ hotelInfo.hotelDescription }}' bindtap='bindHotelDescTap'>
+    <image src='../../images/hotel-desc.png'></image>
+    <text class='title'>酒店描述</text>
+    <view class='text'>
+      <text>{{ hotelInfo.hotelDescription }}</text>
+    </view>
+  </view>
+  <view class='hotel-phone img-title-text-cell' data-phonenum='{{ hotelInfo.hotelphonecall }}' bindtap='bindPhoneCallTap'>
+    <image src='../../images/phone.png'></image>
+    <text class='title'>{{ hotelInfo.hotelPhonecall }}</text>
+  </view> -->
+
+  <!-- 宴会厅 -->
+  <view class='hotel-ballroom'>
+    <view class='title-cell'>
+      <text>宴会厅（{{ ballroomsNum }}）</text>
+    </view>
+    <view class='middle-cell' wx:for="{{ ballrooms }}" wx:for-item="ball" wx:key="*this" data-ballroomid='{{ ball.ballroomId }}' bindtap='goBallroomPage'>
+      <image mode='aspectFill' class='middle-cell-left-img' src='{{ ball.imgUrl }}'></image>
+      <view class='middle-cell-middle-text'>
+        <text>{{ ball.name }} {{ ball.level }}F</text>
+        <text class='lit-text'>桌数：{{ ball.tabNums }}桌</text>
+        <text class='lit-text'>层高：{{ ball.highLevel }}m</text>
+      </view>
+      <view class='middle-cell-right-button'>查看</view>
+    </view>
+    <!-- <view class='pack-up' bindtap="bindBallroomPackUp">
+      {{ ballPackText }}<image src='{{ ballPackText == "展开" ? "../../images/pack-down.png" : "../../images/pack-up.png" }}'></image>
+    </view> -->
+    <!-- <view class='pack-up' bindtap="bindBallroomTap">
+    </view> -->
+    <!-- hidden='{{ ballrooms.length <= 2 }}' -->
+    <view class='title-arrow-cell' bindtap='bindBallroomTap'>     
+      <text class='title'>查看全部宴会厅</text>
+      <image class='right-icon' src='../../images/arrow-right.png'></image> 
+    </view>  
+  </view>
+
+  <!-- 菜品 -->
+  <view class='hotel-wedding-menu'>
+    <view class='scroll-h-title'>
+      <text>菜品</text>
+    </view>
+    <scroll-view class="scroll-view_H" scroll-x='true'>
+      <view class='scroll-h-item' wx:for="{{ weddingmenu }}" wx:for-item="wed" wx:key="*this" id='{{ wed.disId }}' bindtap='goDishesDetailsPage'>
+        <image mode='aspectFill' class='bg-img' src='{{ wed.imgUrl }}'></image>
+        <view class='text-view'>
+          <text class='left-text'>{{ wed.name }}</text>
+          <text class='right-text'>¥ {{ wed.price }}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+    <!-- <view class='title-txt-arrow-cell' wx:for="{{ weddingmenu }}" wx:for-item="wed" wx:key="*this" id='{{ wed.disId }}' bindtap='goDishesDetailsPage'>
+        <text class='title'>{{ wed.name }}</text>
+        <text class='text'>¥ {{ wed.price }}/桌</text>
+        <image class='right-icon' src='../../images/arrow-right.png'></image>
+    </view>
+    <view class='title-arrow-cell' bindtap='goWeddingTalentPage'>     
+      <text class='title'>查看全部菜单</text> 
+      <image class='right-icon' src='../../images/arrow-right.png'></image> 
+    </view>  -->
+
+
+  <!-- 宴会庆典 -->
+  <view class='hotel-wedding-menu'>
+    <view class='scroll-h-title'>
+      <text>宴会庆典</text>
+    </view>
+    <scroll-view class="celebration-scroll-view_H" scroll-x='true'>
+      <view class='celebration-scroll-h-item' wx:for="{{ banquet }}" wx:for-item="banquet" wx:key="*this" id='{{ banquet.celebrationid }}' bindtap='goCelebrationDetailsPage'>
+        <image class='bg-img' mode='aspectFill' src='{{ banquet.imgUrl }}'></image>
+        <view class='text-view'>
+          <text class='left-text'>{{ banquet.name }}</text>
+          <text class='right-text'>¥ {{ banquet.price }}</text>
+        </view>
+        <view class='style-view'>
+          <text class='style-icon'>{{ banquet.style }}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+    <!-- <view class='title-txt-arrow-cell' wx:for="{{ banquet }}" wx:for-item="banquet" id='{{ banquet.celebrationid }}' wx:key="*this" bindtap='goCelebrationDetailsPage'>     
+      <view class="weui-cell__ft weui-cell__ft_in-access">
+        <text class='title'>{{ banquet.name }}</text>  
+        <text class='text'>¥ {{ banquet.price }}起</text>
+      </view>
+    </view>     
+    <view class="title-arrow-cell" bindtap='goCelebrationListPage'>
+      <text class='title'>查看全部宴会庆典产品</text>
+      <image class='right-icon' src='../../images/arrow-right.png'></image> 
+    </view>
+  </view> -->
+
+</view>

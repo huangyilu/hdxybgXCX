@@ -1,0 +1,66 @@
+{
+  "pages": [
+    "pages/hotel/hotel",
+    "pages/message/message",
+    "pages/profile/profile",
+    "pages/ballroom/ballroom",
+    "pages/ballroom/allBallroomList",
+    "pages/ballroom/ballCommentList",
+    "pages/weddingTalent/weddingTalent",
+    "pages/settlement/settlement",
+    "pages/calculate/scheduleQuery",
+    "pages/calculate/appointmentSite",
+    "pages/calculate/changeSchedule",
+    "pages/celebrationDetails/celebrationDetails",
+    "pages/dishesDetails/dishesDetails",
+    "pages/profile/feedback",
+    "pages/message/messageDetails",
+    "pages/talentDetails/talentMorePic",
+    "pages/talentDetails/talentMoreVideo",
+    "pages/talentDetails/talentComment",
+    "pages/talentDetails/talentComparison",
+    "pages/celebrationDetails/celebrationList",
+    "pages/celebrationDetails/celebrationShowMorePic",
+    "pages/shoppingCar/shoppingCar",
+    "pages/profile/historyorder",
+    "pages/comment/comment",
+    "pages/profile/paymentCom",
+    "pages/profile/myorder",
+    "pages/talentDetails/talentDetails",
+    "pages/talentDetails/talentSelectComp",
+    "pages/shoppingCar/shoppingCarIn",
+    "pages/dishesDetails/dishesComment",
+    "pages/celebrationDetails/celebrationComment"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F15A4A",
+    "navigationBarTitleText": "苏州独墅湖世尊酒店",
+    "navigationBarTextStyle": "#ffffff"
+  },
+  "tabBar": {
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "selectedColor": "#F15A4A",
+    "list": [
+      {
+        "pagePath": "pages/hotel/hotel",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-red.png"
+      },
+      {
+        "pagePath": "pages/shoppingCar/shoppingCar",
+        "text": "购物车",
+        "iconPath": "images/shopping-car-gray.png",
+        "selectedIconPath": "images/shopping-car-red.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/my.png",
+        "selectedIconPath": "images/my-red.png"
+      }
+    ]
+  }
+}

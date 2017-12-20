@@ -1,0 +1,3 @@
+/* pages/celebrationDetails/celebrationComment.wxss */
+
+@import '../../templates/comment-item/comment-item.wxss';
