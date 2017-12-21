@@ -12,8 +12,8 @@ Page({
    * 页面的初始数据
    */
   data: {
-    // navbarTabs:['待付款','付尾款','待评价'],
-    navbarTabs: ['待付款', '待评价'],
+    navbarTabs:['待付款','付尾款','待评价'],
+    // navbarTabs: ['待付款', '待评价'],
     activeIndex: 0,
     sliderOffset: 0,
     sliderLeft: 0,
@@ -111,6 +111,7 @@ Page({
     })
   },
   getAppointments() {
+    // 获取 待付款
     HotelDataService.queryAppointmentList(this.data.openid).then((result) => {
       // console.log("queryAppointmentList success = " + JSON.stringify(result));
       this.setData({
@@ -119,6 +120,13 @@ Page({
     }).catch((error) => {
       console.log(error);
     })
+  },
+  getPayRetainagePrice () {
+    // 获取 付尾款
+
+      this.setData({
+        paymentList: hoteldata.formatMyorderPayRetainagePrice(result)
+      })
   },
 
   bindAppointmentTap (e) {

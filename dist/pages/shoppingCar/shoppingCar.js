@@ -8,6 +8,9 @@ import * as hoteldata from '../../utils/hoteldata-format';
 import { uniqWith, isEqual, difference } from '../../utils/npm/lodash-wx'
 import moment from '../../utils/npm/moment';
 
+import { makePayment } from '../../services/wxpay-service';
+
+
 Page({
 
   /**
@@ -369,41 +372,50 @@ Page({
   },
   bindUploadPrepay (e) {
 
-//    var customerName = wx.getStorageSync('contacts').contact;
-//    var tel = wx.getStorageSync('contacts').contactInformation;
-//    var reservedDate = wx.getStorageSync('reservedDate');
-//      
-//    console.log('customerName ... ' + JSON.stringify(customerName));
-//    console.log('tel ... ' + JSON.stringify(tel));
-//    console.log('reservedDate ... ' + JSON.stringify(reservedDate));
-
-    var info = hoteldata.formatuploadPrepay(this.data.shoppingcarinstore, this.data.reservedDate, this.data.contacts.contact, this.data.contacts.contactInformation, this.data.totalPrice, +this.data.prepayPrice, +this.data.tabNumsText, '第一单订单', this.data.packageStage.packName, this.data.packageStage.stage, this.data.packageStage.packPrice, this.data.openId);
+    var info = hoteldata.formatuploadPrepay(this.data.shoppingcarinstore, this.data.reservedDate, this.data.contacts.contact, this.data.contacts.contactInformation, this.data.totalPrice, +this.data.prepayPrice, +this.data.tabNumsText, '酒店服务', this.data.packageStage.packName, this.data.packageStage.stage, this.data.packageStage.packPrice, this.data.openId);
 
     console.log('info ... ' + JSON.stringify(info));
 
-     HotelDataService.uploadPrepay(info).then((result) => {
+    // 发起支付
+    makePayment(info).then(() => {
+        // console.log('支付成功');
+
+        // 清空 本地购物车联系人 预定日期
+        this.removeSavedContacts();
+
+        // 保存订单id
+
+        // 跳转 我的订单 
+        wx.navigateTo({
+          url: '../profile/myorder',
+        })
+
+    })
+
+    //  HotelDataService.uploadPrepay(info).then((result) => {
        // console.log("success = " + JSON.stringify(result.hotel));
-       console.log("uploadPrepay success..." + JSON.stringify(result));
-      wx.showToast({
-        title: '提交成功!',
-        icon: 'success',
-        duration: 2000
-      })
+      //  console.log("uploadPrepay success..." + JSON.stringify(result));
+      // wx.showToast({
+      //   title: '提交成功!',
+      //   icon: 'success',
+      //   duration: 2000
+      // })
 
       // 清空 本地购物车联系人 预定日期
-      this.removeSavedContacts();
+      // this.removeSavedContacts();
     
       // 保存订单id
       
       // 跳转 我的订单 
-      wx.navigateTo({
-        url: '../profile/myorder',
-      })
+      // wx.navigateTo({
+      //   url: '../profile/myorder',
+      // })
 
+      // 发起支付
 
-     }).catch((error) => {
-       console.log(error);
-     })
+    //  }).catch((error) => {
+    //    console.log(error);
+    //  })
 
   },
 
@@ -431,9 +443,6 @@ Page({
   },
   // 清空本地 联系人 方式 预约日期
   removeSavedContacts () {
-    // wx.removeStorageSync('shoppingcar');
-    // wx.removeStorageSync('reservedDate');
-    // wx.removeStorageSync('contacts');
 
     shoppingCarStore.clear('shoppingcar').finally(() => {
       

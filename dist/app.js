@@ -1,5 +1,7 @@
 //app.js
+import { promisifyWXAsyncAPI } from './services/wx-promisify-service';
 
+promisifyWXAsyncAPI();
 App({
   onLaunch: function () {
     // 展示本地存储能力 heiheihei

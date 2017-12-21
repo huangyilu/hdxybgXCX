@@ -51,7 +51,7 @@
     <!-- 选项一结束 -->
     
     <!-- 选项二的内容 -->
-    <view class="weui-tab__content" hidden="{{ activeIndex != 3 }}" style='border-top-style:none;'>
+    <view class="weui-tab__content" hidden="{{ activeIndex != 1 }}" style='border-top-style:none;'>
 
       <view style='height:100%;margin-bottom:170rpx;'>
       <block wx:for="{{ paymentList }}" wx:for-item="pay" wx:key="{{ index }}" >
@@ -106,7 +106,7 @@
     <!-- 选项二结束 -->
 
     <!-- 选项三开始 -->
-    <view class="weui-tab__content" hidden="{{ activeIndex != 1 }}" style='border-top-style:none;'>
+    <view class="weui-tab__content" hidden="{{ activeIndex != 2 }}" style='border-top-style:none;'>
     <block wx:for="{{ commentList }}" wx:for-item="comt" wx:key="{{ index }}" >
     <view class='cell'>
       <view class='cell-title'>

@@ -510,6 +510,7 @@ export function formatuploadPrepay(list, reservedDate, customerName, tel, totalP
     customerName: customerName ? customerName : '',
     tel: tel ? tel : '',
     customerId: openid ? openid : '',
+    openId: openid ? openid : '',
     reservedDates: reservedDate ? reservedDate : '',
     desc: desc ? desc : '',
     count: totalPrice ? totalPrice : '',
@@ -589,6 +590,20 @@ export function formatAppListItem(item,title) {
     floorHeight: item.floorHeight ? '层高：' + item.floorHeight : '',
     price: item.price ? item.price : 0,
     nums: item.countTable ? item.countTable : 1
+  }
+}
+
+// 我的订单 -- 付尾款
+export function formatMyorderPayRetainagePrice (list) {
+  return list.map(item => this.formatMyorderPayRetainagePriceItem(item));
+}
+export function formatMyorderPayRetainagePriceItem (item) {
+  return {
+    time: moment(item.reservedDate).format('YYYY-MM-DD'),
+    depositPrice: 10000,
+    retainagePrice: 28888,
+    checked: true,
+    payList: this.formatAppList(item.hall, item.combo, item.celebration, item.talent)
   }
 }
 
