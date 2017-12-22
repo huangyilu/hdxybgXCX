@@ -79,7 +79,7 @@ Page({
     this.getShoppingCarData();
 
     this.setData({
-      openId: wx.getStorageSync('openid')
+      openId: wx.getStorageSync('openid').val
     })
   
   },
@@ -581,6 +581,9 @@ Page({
       key: "reservedDate",
       data: chooseTime
     })
+    this.setData({
+      reservedDate: chooseTime
+    })
     console.log('saveLocalChooseTime = ' + chooseTime)
 //    contactsInfoStore.save('reservedDate', chooseTime);
   },
@@ -588,6 +591,9 @@ Page({
     wx.setStorage({
       key: "contacts",
       data: contacts
+    })
+    this.setData({
+      contacts: contacts
     })
     console.log('saveLocalContacts = ' + JSON.stringify(contacts))
 //    contactsInfoStore.save('contacts', contacts);

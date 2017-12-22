@@ -61,6 +61,13 @@ Page({
     commentList: []
   },
 
+  // onPullDownRefresh: function () {
+  //   // 获取待评价订单
+  //   this.getPendingComments();
+  //   //获取待付款订单
+  //   this.getAppointments();
+  // },
+
   /**
    * 生命周期函数--监听页面加载
    */
@@ -70,7 +77,7 @@ Page({
     this.setData({
       'windowHeight': res.windowHeight,
       sliderLeft: (res.windowWidth / this.data.navbarTabs.length - sliderWidth) / 2,
-      openid: wx.getStorageSync('openid')
+      openid: wx.getStorageSync('openid').val
     });
 
     //获取待付款订单

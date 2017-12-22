@@ -94,7 +94,7 @@ page {
     width: 90%;
     background-color: white;
     border-radius: 10rpx;
-    margin: 30% auto;
+    margin: 15% auto;
     font-size: 30rpx;
 }
 

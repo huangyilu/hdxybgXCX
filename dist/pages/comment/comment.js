@@ -239,7 +239,7 @@ Page({
     console.log('scoringItems = ' + JSON.stringify(this.data.scoringItems));
 
     var orderId = this.data.orderid;
-    var openId = wx.getStorageSync('openid');
+    var openId = wx.getStorageSync('openid').val;
     var nickName = wx.getStorageSync('userinfo').nickName;
     var headImg = wx.getStorageSync('userinfo').avatarUrl;
 

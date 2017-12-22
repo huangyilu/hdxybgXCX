@@ -20,12 +20,12 @@
           <text class='second-txt-color'>预约日期：{{ appLists.time }}</text>
         </view>
         <!-- 预约码 -->
-        <view class='reservation-code-view'>
+        <!-- <view class='reservation-code-view'>
           <view class='text-view second-txt-color'>预约码： <text>{{ appLists.reservationCode }}</text></view>
           <view class='img-view'>
             <image mode='aspectFit' src='{{ appLists.reservationCodeImg }}'></image>
           </view>
-        </view>
+        </view> -->
         <!-- 预约码 -->
         <view>
           <block wx:for="{{ appLists.appList }}" wx:for-item="apit" wx:key="{{ index }}">
@@ -42,6 +42,13 @@
           </view>
           </block>
         </view>
+        <!-- 附加 价钱 等信息 -->
+        <view class='price-cell-view'>
+          <!-- 定金 -->
+          <text >应付定金：<text class='price-p'>{{ appLists.prePrice }}</text></text>
+          <view>付款</view>
+        </view>
+
       </view>
       </block>
 

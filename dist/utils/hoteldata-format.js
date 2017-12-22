@@ -255,48 +255,6 @@ export function getTalentCommentItem (item) {
   }
 }
 
-export const weddinghost = [
-  {
-    avatar: '../../images/1.jpg',
-    name: '黎明',
-    praise: '91%',
-    transaction: '20',
-    price: '3999'
-  },
-  {
-    avatar: '../../images/1.jpg',
-    name: '张晓晓',
-    praise: '92%',
-    transaction: '20',
-    price: '3999'
-  },
-  {
-    avatar: '../../images/1.jpg',
-    name: '李芬芬',
-    praise: '93%',
-    transaction: '20',
-    price: '3999'
-  }
-] 
-
-export const weddingplanner = [
-  {
-    avatar: '../../images/1.jpg',
-    name: '张晓晓',
-    praise: '94%',
-    transaction: '20',
-    price: '3999'
-  },
-  {
-    avatar: '../../images/1.jpg',
-    name: '李芬芬',
-    praise: '95%',
-    transaction: '20',
-    price: '3999'
-  }
-]
-
-
 // 菜品
 export function formatWeddingmenu(list) {
   return list.map(item => this.formatWeddingmenuItem(item))
@@ -430,7 +388,6 @@ export function formatShoppingcarItem(item, i) {
     floorHeight: item.content.info.floorHeight ? '层高:' + item.content.info.floorHeight +'m' : '',
     tableNum: item.content.info.minTable ? item.content.info.minTable + '~' + item.content.info.maxTable + '桌' : '',
     price: item.content.packageStage ? this.getCelebrationPrice(item.content.packageStage) : (item.content.info.price ? item.content.info.price : 0),
-    // price: item.content.packageStage ? (item.content.packageStage.stage == true ? (item.content.packageStage.packPrice + item.content.packageStage.stageprice) : (item.content.info.price ? item.content.info.price : 0)) : (item.content.info.price ? item.content.info.price : 0),
     nums: item.content.tableNum ? item.content.tableNum : 1,
     finalTableNum: item.content.tableNum ? item.content.tableNum : null,
     minTable: item.content.info.minTable ? item.content.info.minTable : null,
@@ -488,28 +445,12 @@ export function getLocalShoppingImgurl(name, item) {
 }
 // 预付定金
 export function formatuploadPrepay(list, reservedDate, customerName, tel, totalPrice, prepayPrice, hallTable, desc, comboStyle, isStage, celePrice, openid) {
-
-// hotelId: +appConfig.hotelId,
-// customerName: dic.customerName,
-// tel: dic.tel,
-// customerId: dic.customerId,
-// reservedDates: dic.reservedDate,
-// hall: dic.hallid,
-// combo: dic.comboid,
-// celebration: dic.celebrationid,
-// talent: dic.talentid,
-// desc: dic.desc,
-// count: dic.count,
-// prePay: dic.prePay,
-// hallTable: dic.hallTable,
-// comboStyle: dic.comboStyle,
-// isStage: dic.isStage
   
   var dic = {
     hotelId: +appConfig.hotelId,
     customerName: customerName ? customerName : '',
     tel: tel ? tel : '',
-    customerId: openid ? openid : '',
+    // customerId: openid ? openid : '',
     openId: openid ? openid : '',
     reservedDates: reservedDate ? reservedDate : '',
     desc: desc ? desc : '',
@@ -524,7 +465,6 @@ export function formatuploadPrepay(list, reservedDate, customerName, tel, totalP
     if (item.title == '宴会厅') {
       dic.hall = item.content.typeid;
     } else if (item.title == '婚礼人才') {
-      // dic.talentid = dic.talentid + ',' + item.content.typeid;
       talentids.push(item.content.typeid);
       dic.talent = talentids.join(",");
       console.log('talentid ... ' + dic.talent);
@@ -551,6 +491,8 @@ export function formatMyorderAppointmentItem (item) {
     time: moment(item.reservedDate).format('YYYY-MM-DD'),
     reservationCode: item.vaidateCode,
     reservationCodeImg: item.twoBarCode,
+    prePrice: item.obligation,
+    countPrice: item.count,
     appList: this.formatAppList(item.hall, item.combo, item.celebration, item.talent)
   }
 }
@@ -773,22 +715,7 @@ export function formatHistoryorderItem (item) {
 
 
 
-// 小方法
-
-// 取前两条
-export function getLittleArrs(balls) {
-
-  if (balls.length > 2) {
-    var newBalls = [];
-    for (var i = 0; i < 2; i++) {
-      newBalls.push(balls[i]);
-    }
-    return newBalls;
-  } else {
-    return balls;
-  }
-
-}
+/*  -------------------- 小方法 ------------------------ */
 
 // 取前N条 
 export function getTheTopN(list, n) {

@@ -18,7 +18,7 @@ Page({
   onLoad: function (options) {
 
     //获取 历史订单
-    var openid = wx.getStorageSync('openid');
+    var openid = wx.getStorageSync('openid').val;
     console.log('openid .. ' + openid);
 
     HotelDataService.queryHistoryOrderList(openid).then((result) => {

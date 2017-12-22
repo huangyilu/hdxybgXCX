@@ -32,7 +32,8 @@ const pageOptions = {
   //事件处理函数
   onLoad: function () {
 
-    AuthService.wxappLogin()
+    // 授权登录
+    // AuthService.wxappLogin();
     // 取数据
     this.getHotelData();
 

@@ -63,16 +63,8 @@ Page({
       // 菜品 数据
       this.getDishesList();
     } else {
-        //婚礼人才 数据
-//        contactsInfoStore.get('reservedDate').then(result => {
-            this.getTalentList(options.reservedDate);
-//            this.setData({
-//                reserveddate: result
-//            })
-//        }).catch(error => {
-//            console.log('contactsInfoStore .. error ' + JSON.stringify(error));
-//        });
-        
+      //婚礼人才 数据
+      this.getTalentList(options.reservedDate);
     }
 
     this.getShoppingCarInStore();
@@ -83,11 +75,11 @@ Page({
   },
   onHide: function () {
     console.log('onHide..'); 
-    shoppingCarStore.save('shoppingcar', this.data.shoppingcars.shoppinglist);
+    // shoppingCarStore.save('shoppingcar', this.data.shoppingcars.shoppinglist);
   },
   onUnload: function () {
     console.log('onUnload..');
-    shoppingCarStore.save('shoppingcar', this.data.shoppingcars.shoppinglist);
+    // shoppingCarStore.save('shoppingcar', this.data.shoppingcars.shoppinglist);
   },
 
   // 数据处理
@@ -171,6 +163,8 @@ Page({
     talentinfo = hoteldata.formatLocalShoppingcar(talentinfo, '婚礼人才');
 
     this.formatShoppingCar(talentinfo, talenttype);
+
+    shoppingCarStore.save('shoppingcar', this.data.shoppingcars.shoppinglist);
     
   },
   // 标记 已选用
@@ -253,6 +247,8 @@ Page({
     var tabNumsText = wx.getStorageSync('ballTablenNum');
     var dishesInfo = hoteldata.formatLocalShoppingcar(dishesResult[id], '菜品', tabNumsText);
     this.formatShoppingCar(dishesInfo, '菜品');
+
+    shoppingCarStore.save('shoppingcar', this.data.shoppingcars.shoppinglist);
 
   },
 

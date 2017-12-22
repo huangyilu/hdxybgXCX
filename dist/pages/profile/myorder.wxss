@@ -89,6 +89,23 @@
     margin-top: -5rpx;
     zoom: 70%; 
 }
+.price-cell-view {
+  background-color: white;
+  font-size: 30rpx;
+  text-align: right;
+  padding: 2.5%;
+}
+.price-cell-view .price-p {
+  color: #F15A4A;
+}
+.price-cell-view view {
+  display: inline-block;
+  margin-left: 20rpx;
+  border-radius: 20rpx;
+  color: #F15A4A;
+  padding: 0 25rpx;
+  border: 1px #F15A4A solid;
+}
 
 /* 结算 */
 .settlement-view {

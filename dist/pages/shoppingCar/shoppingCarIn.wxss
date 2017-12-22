@@ -1,4 +1,5 @@
 /* pages/shoppingCar/shoppingCarIn.wxss */
+
 .body {
     margin-bottom: 120rpx;
 }

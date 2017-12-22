@@ -54,11 +54,17 @@ export function makePayment(payDic) {
   }).catch((error) => {
     console.log('@@Pay fail: ' + JSON.stringify(error))
 
-    wx.showToast({
-      title: '支付失败，请重新尝试或联系客服',
-      icon: 'success',
-      duration: 5000
-    })
+    if (error.errMsg == 'requestPayment:cancel') {
+      console.log('取消支付');
+    } else if (error.errMsg == 'requestPayment:fail') {
+      wx.showToast({
+        title: '支付失败，请重新尝试或联系客服',
+        icon: 'success',
+        duration: 5000
+      })
+    }
+
+
   })
 
 }
