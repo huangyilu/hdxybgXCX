@@ -57,10 +57,13 @@ Page({
       'reserveddateData.picker_value': moment().format('YYYY-MM-DD'),
       'reserveddateData.choose_year': moment().format('YYYY'),
       'reserveddateData.choose_month': moment().format('MM'),
-      'reserveddateData.choose_day': moment().format('DD')
+      // 'reserveddateData.choose_day': moment().format('DD') + 1
+      'reserveddateData.choose_day': moment().add(1, 'days').format('DD')
     })
 
-    // console.log(options.ballroomid);
+    
+
+    console.log('reserveddateData.choose_day .. ' + this.data.reserveddateData.choose_day);
 
     this.getBallroomDetails(options.ballroomid);
 
@@ -219,7 +222,7 @@ Page({
     // console.log('idx_year: ' + idx_year + ' idx_month: ' + idx_month + ' idx_day: ' + idx_day);
 
     this.setData({
-      'reserveddateData.picker_value': [idx_year, idx_month, idx_day],
+      'reserveddateData.picker_value': [idx_year, idx_month, idx_day+1],
       'reserveddateData.picker_year': picker_year,
       'reserveddateData.picker_month': picker_month,
       'reserveddateData.picker_day': picker_day

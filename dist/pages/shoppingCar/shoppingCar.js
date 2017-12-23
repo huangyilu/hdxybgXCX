@@ -377,19 +377,25 @@ Page({
     console.log('info ... ' + JSON.stringify(info));
 
     // 发起支付
-    makePayment(info).then(() => {
-        // console.log('支付成功');
+    makePayment(info).then((result) => {
+      console.log('支付 result...' + JSON.stringify(result));
 
-        // 清空 本地购物车联系人 预定日期
-        this.removeSavedContacts();
+        // if (result == false) {
+          
+        // } else {
+        //   // 清空 本地购物车联系人 预定日期
+        //   this.removeSavedContacts();
 
-        // 保存订单id
+        //   // 保存订单id
 
-        // 跳转 我的订单 
-        wx.navigateTo({
-          url: '../profile/myorder',
-        })
+        //   // 跳转 我的订单 
+        //   wx.navigateTo({
+        //     url: '../profile/myorder',
+        //   })
+        // }
 
+    }).catch((error) => {
+      console.log('makePayment fail: ' + JSON.stringify(error));
     })
 
     //  HotelDataService.uploadPrepay(info).then((result) => {

@@ -4,15 +4,15 @@ import * as AuthService from './auth-service';
 
 export function wxRequestP(method, url, contentType, data = {}, accessToken = '') {
 
-  // if (contentType == 'application/json') {
-  //   wx.showLoading({
-  //     title: '加载中',
-  //   })
-  // } else {
-  //   wx.showLoading({
-  //     title: '提交中',
-  //   })
-  // }
+  if (contentType == 'application/json') {
+    wx.showLoading({
+      title: '加载中',
+    })
+  } else {
+    wx.showLoading({
+      title: '提交中',
+    })
+  }
 
   // console.log('@@wxRequestP access_token: ' + accessToken)
   // data.access_token = accessToken
@@ -30,7 +30,7 @@ export function wxRequestP(method, url, contentType, data = {}, accessToken = ''
         if (+res.statusCode >= 200 && +res.statusCode < 400) {
           // console.log(url + ' succeed: ' + JSON.stringify(res.data))
           console.log(url + ' succeed: ' + JSON.stringify(res))
-          // wx.hideLoading()
+          wx.hideLoading()
           // wx.stopPullDownRefresh()
           return resolve(res.data)
         } else {
@@ -40,7 +40,7 @@ export function wxRequestP(method, url, contentType, data = {}, accessToken = ''
         }
       },
       fail(error) {
-        // wx.hideLoading()
+        wx.hideLoading()
         return reject(error)
       }
     })
