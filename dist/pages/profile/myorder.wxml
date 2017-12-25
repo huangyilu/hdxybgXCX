@@ -45,14 +45,15 @@
         <!-- 附加 价钱 等信息 -->
         <view class='price-cell-view'>
           <!-- 定金 -->
+          <view class='cancel-cell-btn' id='{{ index }}' data-orderid='{{ appLists.orderId }}' bindtap='bindCancelOrderTap'>取消订单</view>
           <text >应付定金：<text class='price-p'>{{ appLists.prePrice }}</text></text>
-          <view>付款</view>
+          <view id='{{ index }}' bindtap='bindPrePayCellTap'>付定金</view>
         </view>
 
       </view>
       </block>
 
-      <view class='remind-empty-view' wx:if='{{ appointmentList.length <= 0 }}'>暂无待付款...</view>
+      <view class='remind-empty-view' wx:if='{{ appointmentList.length <= 0 }}'>暂无待付款订单...</view>
 
     </view>
     <!-- 选项一结束 -->
@@ -64,10 +65,10 @@
       <block wx:for="{{ paymentList }}" wx:for-item="pay" wx:key="{{ index }}" >
       <view class='cell'>
         <view class='cell-title'>
-          <checkbox-group data-hisindex='{{ his.hisid }}' bindchange="bindCheckboxChange">
-            <checkbox class='checkbox' value="{{ pay.payid }}" checked="{{ pay.checked }}"/>
+          <!-- <checkbox-group data-hisindex='{{ his.hisid }}' bindchange="bindCheckboxChange">
+            <checkbox class='checkbox' value="{{ pay.payid }}" checked="{{ pay.checked }}"/> -->
             <text class='left-txt'>{{ pay.time }}</text>
-          </checkbox-group>
+          <!-- </checkbox-group> -->
         </view>
         <view>
           <block wx:for="{{ pay.payList }}" wx:for-item="pl" wx:key="{{ index }}" >
@@ -84,6 +85,13 @@
           </view>
           </block>
         </view>
+        <!-- 附加 价钱 等信息 -->
+        <view class='price-cell-view'>
+          <!-- 定金 -->
+          <text>已付定金：{{ pay.prePrice }}</text>
+          <text >应付尾款：<text class='price-p'>{{ pay.finalyPrice }}</text></text>
+          <view id='{{ index }}' data-orderid='{{ pay.orderId }}' bindtap='bindPrePayCellTap'>付尾款</view>
+        </view>
       </view>
       </block>
 
@@ -95,7 +103,7 @@
       <view class='empty-view'></view> -->
 
       <!-- 付尾款 -->
-      <view class='weui-footer weui-footer_fixed-bottom settlement-view'>
+      <!-- <view class='weui-footer weui-footer_fixed-bottom settlement-view'>
         <view class='weui-flex'>
           <view class='weui-flex__item'>
             <view class='flex-wrp'>
@@ -104,10 +112,12 @@
             </view>
           </view>
           <view>
-            <view class='settlement-btn' bindtap='bindPaymentComTap'>付尾款</view>
+            <view class='settlement-btn' bindtap='bindPaymentTap'>付尾款</view>
           </view>
         </view>
-      </view>
+      </view> -->
+
+      <view class='remind-empty-view' wx:if='{{ paymentList.length <= 0 }}'>暂无付尾款订单...</view>
 
     </view>
     <!-- 选项二结束 -->
@@ -151,7 +161,7 @@
     </view>
     </block>
 
-    <view class='remind-empty-view' wx:if='{{ commentList.length <= 0 }}'>暂无待评价...</view>
+    <view class='remind-empty-view' wx:if='{{ commentList.length <= 0 }}'>暂无待评价订单...</view>
 
     </view>
     <!-- 选项三结束 -->

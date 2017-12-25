@@ -164,7 +164,14 @@ export function queryHistoryOrderList (openId) {
   })
 }
 
-// 预约单
+// 待付款
+export function queryUnpaidOrderList (openId) {
+  return jsonGetRequest('order/unpaidOrderList', {
+    openId: openId
+  })
+}
+
+// 付尾款
 export function queryAppointmentList (openId) {
   return jsonGetRequest('order/reservedOrderList', {
     openId: openId
@@ -177,6 +184,10 @@ export function queryPendingCommentList (openId) {
     openId: openId
   })
 }
+// 关闭订单 
+export function uploadCloseUppayOrder (orderid) {
+  return urlencodePostRequest('order/closeUnpaidOrderList', orderid)
+}
 
 // 评价 提交
 export function uploadComment(comtdata) {
@@ -184,16 +195,17 @@ export function uploadComment(comtdata) {
 }
 
 // 付尾款
-export function uploadFinalPay (orderId) {
-  return jsonGetRequest('order/finalPay', {
-    orderId: orderId
-  })
-}
+// export function uploadFinalPay (orderId) {
+//   return jsonGetRequest('pay/payed', {
+//     orderId: orderId
+//   })
+//   retu
+// }
 
-// 购物车 付定金
-export function uploadPrepay (dic) {
-  return urlencodePostRequest('prepay', dic)
-}
+// // 购物车 付定金 / 待付款
+// export function uploadPrepay (dic) {
+//   return urlencodePostRequest('prepay', dic)
+// }
 
 // 上传评价图片
 export function uploadCommentImg(paths) {

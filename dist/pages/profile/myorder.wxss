@@ -41,10 +41,10 @@
     font-size: 28rpx;
     margin-top: 10rpx;
 }
-.cell-title .left-txt{
+/* .cell-title .left-txt{
     margin-left: 70rpx;
-}
- .cell {
+} */
+.cell {
     margin-bottom: 20rpx;
 } 
 
@@ -95,16 +95,23 @@
   text-align: right;
   padding: 2.5%;
 }
+.price-cell-view text {
+  margin-right: 20rpx;
+}
 .price-cell-view .price-p {
   color: #F15A4A;
 }
 .price-cell-view view {
   display: inline-block;
-  margin-left: 20rpx;
   border-radius: 20rpx;
   color: #F15A4A;
   padding: 0 25rpx;
   border: 1px #F15A4A solid;
+}
+.price-cell-view .cancel-cell-btn {
+  float: left;
+  color: #999;
+  border: 1px #999 solid;
 }
 
 /* 结算 */

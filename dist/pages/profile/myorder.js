@@ -5,6 +5,7 @@ import * as HotelDataService from '../../services/hotel-service';
 import * as AuthService from '../../services/auth-service';
 import { Base64 } from '../../utils/urlsafe-base64'
 
+import { makeFinalPay } from '../../services/wxpay-service';
 
 Page({
 
@@ -25,48 +26,12 @@ Page({
     // 预约单 目前先用预约单代替 待付款
     appointmentList: [],
 
-    // 待付款
-    paymentList: [
-      {
-        payid: 0,
-        time: '2017-09-09',
-        depositPrice: 10000,
-        retainagePrice: 28888,
-        checked: false,
-        payList: [
-          {
-            imgUrl: '../../images/1.jpg',
-            title: '宴会厅',
-            name: '苏园厅',
-            floor: '1F',
-            floorHeight: '层高:7m',
-            price: '2888',
-            nums: '1',
-            checked: 'true'
-          },
-          {
-            imgUrl: '../../images/1.jpg',
-            title: '菜品',
-            name: '佳偶天成宴',
-            floor: '',
-            floorHeight: '',
-            price: '2588/桌',
-            nums: '28'
-          }
-        ]
-      }
-    ],
+    // 付尾款
+    paymentList: [],
 
     // 待评价
     commentList: []
   },
-
-  // onPullDownRefresh: function () {
-  //   // 获取待评价订单
-  //   this.getPendingComments();
-  //   //获取待付款订单
-  //   this.getAppointments();
-  // },
 
   /**
    * 生命周期函数--监听页面加载
@@ -85,29 +50,54 @@ Page({
     // 获取待评价订单
     // this.getPendingComments();
     
-    
-    
+  
   },
   onShow: function (options) {
     // Do something when show.
 
-    // 获取待评价订单
-    this.getPendingComments();
     //获取待付款订单
     this.getAppointments();
+    // 获取待评价订单
+    // this.getPendingComments();
+    //获取 付尾款 订单
+    // this.getPayRetainagePrice();
 
   },
 
+  // tab切换
   navbarTabClick: function (e) {
     this.setData({
       sliderOffset: e.currentTarget.offsetLeft,
       activeIndex: e.currentTarget.id
     });
+
+    switch (+e.currentTarget.id) {
+      case 0:
+        // if (this.data.appointmentList.length <= 0) {
+          //获取 待付款 订单
+          this.getAppointments();
+        // }
+        break;
+      case 1:
+        // if (this.data.paymentList.length <= 0) {
+          //获取 付尾款 订单
+          this.getPayRetainagePrice();
+        // }
+        break;
+      case 2:
+        // if (this.data.commentList.length <= 0) {
+          //获取 待评价 订单
+          this.getPendingComments();
+        // }
+        break;
+    }
+    
+
   },
 
   // 获取数据
   getPendingComments() {
-    // 获取待评价订单
+    // 待评价订单
     HotelDataService.queryPendingCommentList(this.data.openid).then((result) => {
       this.setData({
         commentResult: result,
@@ -118,22 +108,30 @@ Page({
     })
   },
   getAppointments() {
-    // 获取 待付款
-    HotelDataService.queryAppointmentList(this.data.openid).then((result) => {
-      // console.log("queryAppointmentList success = " + JSON.stringify(result));
+    // 待付款
+    HotelDataService.queryUnpaidOrderList(this.data.openid).then((result) => {
+      // console.log("queryUnpaidOrderList success = " + JSON.stringify(result));
       this.setData({
         appointmentList: hoteldata.formatMyorderAppointmentList(result)
       })
+      // console.log("appointmentList success = " + JSON.stringify(this.data.appointmentList));
+      
     }).catch((error) => {
       console.log(error);
     })
   },
-  getPayRetainagePrice () {
-    // 获取 付尾款
-
+  getPayRetainagePrice() {
+    // 查看 待付尾款 list
+    HotelDataService.queryAppointmentList(this.data.openid).then((result) => {
+      // console.log("uploadFinalPay success = " + JSON.stringify(result));
       this.setData({
         paymentList: hoteldata.formatMyorderPayRetainagePrice(result)
       })
+      console.log("appointmentList success = " + JSON.stringify(this.data.paymentList));
+    }).catch((error) => {
+      console.log(error);
+    })
+
   },
 
   bindAppointmentTap (e) {
@@ -158,6 +156,7 @@ Page({
     }
 
   },
+  // 待评价
   bindCommentBtnTap (e) {
 
     var payid = e.currentTarget.dataset.payid;
@@ -192,11 +191,37 @@ Page({
     // console.log(totalPrice);
 
   },
-  bindPaymentComTap () {
+  // 付尾款 最后确认
+  bindPaymentTap () {
     wx.navigateTo({
       url: 'paymentCom',
     })
-  }
+  },
 
+
+  // 待付款 (购物车中点击付款后，未支付成功的订单，可在此处再次提交付款)
+  bindPrePayCellTap (e) {
+    
+    var index = e.currentTarget.id;
+    var orderid = e.currentTarget.dataset.orderid;
+
+    makeFinalPay(orderid, this.data.openid).then((result) => {
+      console.log('支付 尾款 result...' + JSON.stringify(result));
+
+    }).catch((error) => {
+      console.log('makePayment fail: ' + JSON.stringify(error));
+    })
+
+
+  },
+  // 取消订单 (交易关闭)
+  bindCancelOrderTap (e) {
+    var orderid = e.currentTarget.dataset.orderid;
+    HotelDataService.uploadCloseUppayOrder(orderid).then((result) => {
+        
+    }).catch((error) => {
+      console.log('makePayment fail: ' + JSON.stringify(error));
+    })
+  }
   
 })

@@ -450,7 +450,6 @@ export function formatuploadPrepay(list, reservedDate, customerName, tel, totalP
     hotelId: +appConfig.hotelId,
     customerName: customerName ? customerName : '',
     tel: tel ? tel : '',
-    // customerId: openid ? openid : '',
     openId: openid ? openid : '',
     reservedDates: reservedDate ? reservedDate : '',
     desc: desc ? desc : '',
@@ -459,7 +458,7 @@ export function formatuploadPrepay(list, reservedDate, customerName, tel, totalP
   }
   var talentids = [];
 
-  console.log(JSON.stringify(dic));
+  // console.log(JSON.stringify(dic));
 
   list.forEach(item => {
     if (item.title == '宴会厅') {
@@ -488,6 +487,7 @@ export function formatMyorderAppointmentList (list) {
 }
 export function formatMyorderAppointmentItem (item) {
   return {
+    orderid: item.id,
     time: moment(item.reservedDate).format('YYYY-MM-DD'),
     reservationCode: item.vaidateCode,
     reservationCodeImg: item.twoBarCode,
@@ -502,12 +502,12 @@ export function formatAppList (hall, combo, celebration, talent) {
 
   if (hall) {
     hall.forEach(item => {
-      newList.push(this.formatAppListItem(item, '宴会厅'));
+      newList.push(this.formatAppListItem(item, '宴会厅', item.banquetHallId));
     })
   }
   if (combo) {
     combo.forEach(item => {
-      newList.push(this.formatAppListItem(item, '菜品'));
+      newList.push(this.formatAppListItem(item, '菜品', item.id));
     })
   }
   if (celebration) {
@@ -517,14 +517,15 @@ export function formatAppList (hall, combo, celebration, talent) {
   }
   if (talent) {
     talent.forEach(item => {
-      newList.push(this.formatAppListItem(item, '婚礼人才'));
+      newList.push(this.formatAppListItem(item, '婚礼人才', item.weddingTalentId));
     })
   }
 
   return newList
 }
-export function formatAppListItem(item,title) {
+export function formatAppListItem(item, title, id) {
   return {
+    id: item.id ? item.id : null,
     imgUrl: item.image ? item.image : (item.headImg ? item.headImg : item.img),
     title: item.occupation ? item.occupation : title,
     name: item.name,
@@ -535,15 +536,55 @@ export function formatAppListItem(item,title) {
   }
 }
 
+// 我的订单 待付款 提交
+export function formatUploadMyOrderPrepay(list, reservedDate, customerName, tel, totalPrice, prepayPrice, hallTable, desc, comboStyle, isStage, celePrice, openid) {
+
+  var dic = {
+    hotelId: +appConfig.hotelId,
+    customerName: customerName ? customerName : '',
+    tel: tel ? tel : '',
+    openId: openid ? openid : '',
+    reservedDates: reservedDate ? reservedDate : '',
+    desc: desc ? desc : '',
+    count: totalPrice ? totalPrice : '',
+    prePay: prepayPrice ? prepayPrice : '',
+  }
+  var talentids = [];
+
+  // console.log(JSON.stringify(dic));
+
+  list.forEach(item => {
+    if (item.title == '宴会厅') {
+      dic.hall = item.content.typeid;
+    } else if (item.title == '婚礼人才') {
+      talentids.push(item.content.typeid);
+      dic.talent = talentids.join(",");
+      console.log('talentid ... ' + dic.talent);
+    } else if (item.title == '菜品') {
+      dic.combo = item.content.typeid;
+      dic.hallTable = hallTable;
+    } else if (item.title == '宴会庆典') {
+      dic.celebration = item.content.typeid;
+      dic.celePrice = celePrice.toString();
+      dic.comboStyle = comboStyle;
+      dic.isStage = isStage;
+    }
+  })
+
+  return dic
+}
+
 // 我的订单 -- 付尾款
 export function formatMyorderPayRetainagePrice (list) {
   return list.map(item => this.formatMyorderPayRetainagePriceItem(item));
 }
 export function formatMyorderPayRetainagePriceItem (item) {
   return {
+    orderId: item.id,
     time: moment(item.reservedDate).format('YYYY-MM-DD'),
-    depositPrice: 10000,
-    retainagePrice: 28888,
+    totalPrice: item.count ? item.count : 0,
+    prePrice: item.prePayPrice ? item.prePayPrice : 0,
+    finalyPrice: item.obligation ? item.obligation : 0,
     checked: true,
     payList: this.formatAppList(item.hall, item.combo, item.celebration, item.talent)
   }

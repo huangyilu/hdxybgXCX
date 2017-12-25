@@ -104,6 +104,11 @@ Page({
       packageStage: packageStage
     })
 
+    wx.setStorage({
+      key: "packageStage",
+      data: packageStage
+    })
+
     // 保存购物车
     this.joinShoppingCar(packageStage);
 
