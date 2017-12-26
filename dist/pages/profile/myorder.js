@@ -5,7 +5,7 @@ import * as HotelDataService from '../../services/hotel-service';
 import * as AuthService from '../../services/auth-service';
 import { Base64 } from '../../utils/urlsafe-base64'
 
-import { makeFinalPay } from '../../services/wxpay-service';
+import { makeFinalPay, makePayment, requestPayment } from '../../services/wxpay-service';
 
 Page({
 
@@ -49,6 +49,8 @@ Page({
     // this.getAppointments();
     // 获取待评价订单
     // this.getPendingComments();
+
+    
     
   
   },
@@ -198,15 +200,35 @@ Page({
     })
   },
 
+  bindFinalyPayCellTap (e) {
+    var index = e.currentTarget.id;
+    var orderid = e.currentTarget.dataset.orderid;
 
+    makeFinalPay(orderid, this.data.openid).then((result) => {
+      console.log('支付 尾款 result...' + JSON.stringify(result));
+
+      //刷新 付尾款 订单
+      this.getPayRetainagePrice();
+
+    }).catch((error) => {
+      console.log('makePayment fail: ' + JSON.stringify(error));
+    })
+  },
   // 待付款 (购物车中点击付款后，未支付成功的订单，可在此处再次提交付款)
   bindPrePayCellTap (e) {
     
     var index = e.currentTarget.id;
     var orderid = e.currentTarget.dataset.orderid;
 
-    makeFinalPay(orderid, this.data.openid).then((result) => {
-      console.log('支付 尾款 result...' + JSON.stringify(result));
+    var params = wx.getStorageSync('prepayOrderParams');
+
+    requestPayment(params).then((result) => {
+      console.log('支付 定金 result...' + JSON.stringify(result));
+      
+      if (result) {
+        // 刷新 待付款
+        this.getAppointments();
+      }
 
     }).catch((error) => {
       console.log('makePayment fail: ' + JSON.stringify(error));
@@ -218,9 +240,15 @@ Page({
   bindCancelOrderTap (e) {
     var orderid = e.currentTarget.dataset.orderid;
     HotelDataService.uploadCloseUppayOrder(orderid).then((result) => {
-        
+      console.log('uploadCloseUppayOrder success: ' + JSON.stringify(result));
+
+      if (result == 'SUCCESS') {
+        // 刷新 待付款
+        this.getAppointments();
+      }
+
     }).catch((error) => {
-      console.log('makePayment fail: ' + JSON.stringify(error));
+      console.log('uploadCloseUppayOrder fail: ' + JSON.stringify(error));
     })
   }
   

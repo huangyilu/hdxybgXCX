@@ -39,6 +39,14 @@ const pageOptions = {
 
   },
 
+  //下拉刷新
+  onPullDownRefresh: function () {
+    wx.showNavigationBarLoading() //在标题栏中显示加载
+
+    // 取数据
+    this.getHotelData();
+
+  },
 
 // 页面跳转
   goBallroomPage (e) {
@@ -142,6 +150,13 @@ const pageOptions = {
         weddingmenuNum: result.comboList.length,
         banquet: hoteldata.formatBanquet(result.celebrationList),
       })
+
+      // 保存 预付定金比例
+      wx.setStorageSync('prepayPercent', result.hotel.prepayPercent);
+
+      // complete
+      wx.hideNavigationBarLoading() //完成停止加载
+      wx.stopPullDownRefresh() //停止下拉刷新
 
     }).catch((error) => {
       console.log(error);

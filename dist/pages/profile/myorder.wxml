@@ -45,7 +45,7 @@
         <!-- 附加 价钱 等信息 -->
         <view class='price-cell-view'>
           <!-- 定金 -->
-          <view class='cancel-cell-btn' id='{{ index }}' data-orderid='{{ appLists.orderId }}' bindtap='bindCancelOrderTap'>取消订单</view>
+          <view class='cancel-cell-btn' id='{{ index }}' data-orderid='{{ appLists.orderid }}' bindtap='bindCancelOrderTap'>取消订单</view>
           <text >应付定金：<text class='price-p'>{{ appLists.prePrice }}</text></text>
           <view id='{{ index }}' bindtap='bindPrePayCellTap'>付定金</view>
         </view>
@@ -61,7 +61,7 @@
     <!-- 选项二的内容 -->
     <view class="weui-tab__content" hidden="{{ activeIndex != 1 }}" style='border-top-style:none;'>
 
-      <view style='height:100%;margin-bottom:170rpx;'>
+      <!-- <view style='height:100%;margin-bottom:170rpx;'> -->
       <block wx:for="{{ paymentList }}" wx:for-item="pay" wx:key="{{ index }}" >
       <view class='cell'>
         <view class='cell-title'>
@@ -90,12 +90,12 @@
           <!-- 定金 -->
           <text>已付定金：{{ pay.prePrice }}</text>
           <text >应付尾款：<text class='price-p'>{{ pay.finalyPrice }}</text></text>
-          <view id='{{ index }}' data-orderid='{{ pay.orderId }}' bindtap='bindPrePayCellTap'>付尾款</view>
+          <view id='{{ index }}' data-orderid='{{ pay.orderId }}' bindtap='bindFinalyPayCellTap'>付尾款</view>
         </view>
       </view>
       </block>
 
-      </view>
+      <!-- </view> -->
       <!-- 占位符 -->
       <!-- <view class='empty-view'></view>
       <view class='empty-view'></view> 

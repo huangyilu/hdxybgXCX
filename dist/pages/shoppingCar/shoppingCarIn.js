@@ -24,6 +24,8 @@ Page({
     paymentList: [],
     shoppingcarinstore: [],
     openId: 0,
+    prepayPercent: 0,
+    appointmentList: [],
 
     // 桌数
     tableHidden: true,
@@ -55,6 +57,7 @@ Page({
 
   onShow: function () {
     this.getShoppingCarData();
+    this.getAppointments();
   },
   /**
    * 生命周期函数--监听页面加载
@@ -78,8 +81,10 @@ Page({
 
     this.getShoppingCarData();
 
+
     this.setData({
-      openId: wx.getStorageSync('openid').val
+      openId: wx.getStorageSync('openid').val,
+      prepayPercent: wx.getStorageSync('prepayPercent')
     })
 
   },
@@ -135,6 +140,16 @@ Page({
     }
   },
 
+  getAppointments() {
+    // 待付款
+    HotelDataService.queryUnpaidOrderList(wx.getStorageSync('openid').val).then((result) => {
+      this.setData({
+        appointmentList: result
+      })
+    }).catch((error) => {
+      console.log(error);
+    })
+  },
   getShoppingCarData() {
     shoppingCarStore.get('shoppingcar').then(result => {
 
@@ -155,10 +170,6 @@ Page({
     });
 
     //  取 联系人信息 
-    var customerName = wx.getStorageSync('contacts').contact;
-    var tel = wx.getStorageSync('contacts').contactInformation;
-    var reservedDate = wx.getStorageSync('reservedDate');
-
     this.setData({
       contacts: wx.getStorageSync('contacts'),
       reservedDate: wx.getStorageSync('reservedDate')
@@ -183,7 +194,7 @@ Page({
 
 
   },
-  // 获取最大桌数 最小桌数
+  // 获取最大桌数 最小桌数 宴会庆典 全息信息等
   getMaxMinTable(list) {
     var min = 0;
     var max = 0;
@@ -221,7 +232,7 @@ Page({
     })
     this.setData({
       totalPrice: price,
-      prepayPrice: (price * 0.2).toFixed(2)
+      prepayPrice: (price * (+this.data.prepayPercent / 100)).toFixed(2)
     })
   },
 
@@ -366,8 +377,17 @@ Page({
   // 付定金
   bindPayTap(e) {
     if (this.checkReserveddate()) {
-      // 上传 资料
-      this.bindUploadPrepay();
+      // 判断 是否 有未付款的 订单 如果有，则不可以再下单
+      if (this.data.appointmentList.length > 0) {
+        //还有未 付款的 订单
+        wx.showModal({
+          title: '提示！',
+          content: '您还有未付定金的订单！请付款后再下单！',
+        })
+      } else {
+        // 上传 资料
+        this.bindUploadPrepay();
+      }
     }
   },
   bindUploadPrepay(e) {
@@ -377,45 +397,40 @@ Page({
     console.log('info ... ' + JSON.stringify(info));
 
     // 发起支付
-    makePayment(info).then(() => {
-      // console.log('支付成功');
+    makePayment(info).then((result) => {
+      console.log('支付 result...' + JSON.stringify(result));
 
-      // 清空 本地购物车联系人 预定日期
-      this.removeSavedContacts();
+      if (result == true) {
+        // 清空 本地购物车联系人 预定日期
+        this.removeSavedContacts();
+        // 跳转 我的订单 付尾款
+        wx.navigateTo({
+          url: '../profile/myorder',
+        })
+      } else if (result == '下单失败') {
 
-      // 保存订单id
+      } else {
+        // 清空 本地购物车联系人 预定日期
+        this.removeSavedContacts();
+        // 跳转 我的订单 待付款
+        wx.navigateTo({
+          url: '../profile/myorder',
+        })
+      }
 
-      // 跳转 我的订单 
-      wx.navigateTo({
-        url: '../profile/myorder',
-      })
+    }).catch((error) => {
+      console.log('makePayment fail: ' + JSON.stringify(error));
+
+      if (!error) {
+        // 跳转 我的订单 待付款
+        wx.navigateTo({
+          url: '../profile/myorder',
+        })
+        // 清空 本地购物车联系人 预定日期
+        this.removeSavedContacts();
+      }
 
     })
-
-    //  HotelDataService.uploadPrepay(info).then((result) => {
-    // console.log("success = " + JSON.stringify(result.hotel));
-    //  console.log("uploadPrepay success..." + JSON.stringify(result));
-    // wx.showToast({
-    //   title: '提交成功!',
-    //   icon: 'success',
-    //   duration: 2000
-    // })
-
-    // 清空 本地购物车联系人 预定日期
-    // this.removeSavedContacts();
-
-    // 保存订单id
-
-    // 跳转 我的订单 
-    // wx.navigateTo({
-    //   url: '../profile/myorder',
-    // })
-
-    // 发起支付
-
-    //  }).catch((error) => {
-    //    console.log(error);
-    //  })
 
   },
 
@@ -437,6 +452,12 @@ Page({
           success: function (res) {
             console.log('removeStorage contacts')
           }
+        })
+        wx.removeStorage({
+          key: 'packageStage',
+          success: function (res) {
+            console.log('removeStorage packageStage')
+          },
         })
       }
     })

@@ -27,46 +27,10 @@ export function getBrandWCFinalyPayRequestParams(orderid, openid) {
 export function makeFinalPay(orderid, openid) {
   return getBrandWCFinalyPayRequestParams(orderid, openid).then((orderParams) => {
     if (orderParams.result) {
-      // return requestPayment((orderParams)).then(res => {
-      //   console.log('res .. ' + JSON.stringify(res));
-      // })
-      return new Promise((resolve, reject) => {
-        wx.requestPayment({
-          appId: appConfig.appId,
-          timeStamp: '' + orderParams.timeStamp,
-          nonceStr: orderParams.nonceStr,
-          package: 'prepay_id=' + orderParams.prepayId,
-          signType: 'MD5',
-          paySign: orderParams.paySign,
-          success: (res) => {
-
-            wx.showToast({
-              title: '支付成功！',
-              icon: 'success',
-              duration: 2000
-            })
-            console.log('@@Pay Success: ' + JSON.stringify(res))
-            resolve(true)
-          },
-          fail: (error) => {
-
-            if (error.errMsg == 'requestPayment:cancel') {
-              console.log('取消支付');
-            } else {
-              wx.showToast({
-                title: '支付失败,请重试!',
-                icon: 'success',
-                duration: 5000
-              })
-            }
-            console.log('@@Pay fail: ' + JSON.stringify(error))
-            reject(false)
-          }
-        })
-      })
+      return requestPayment(orderParams);
     } else {
       wx.showToast({
-        title: '支付失败,请重试!',
+        title: '支付失败!',
         icon: 'success',
         duration: 5000
       })
@@ -94,138 +58,52 @@ export function requestPayment(orderParams) {
         resolve(true)
       },
       fail: (error) => {
-      
-        if (error.errMsg == 'requestPayment:cancel') {
-          console.log('取消支付');
-        } else {
+        console.log('@@Pay fail: ' + JSON.stringify(error))
+      },
+      complete: (res) => {
+        
+        console.log('@@Pay complete: ' + JSON.stringify(res))
+        if (res.errMsg == 'requestPayment:ok') {
+        } else if (res.errMsg == 'requestPayment:fail cancel') {
           wx.showToast({
-            title: '支付失败,请重试!',
+            title: '您已取消支付！',
             icon: 'success',
             duration: 5000
           })
+          reject(false)
+        } else {
+          wx.showToast({
+            title: '支付失败!',
+            icon: 'success',
+            duration: 5000
+          })
+          reject(false)
         }
-        console.log('@@Pay fail: ' + JSON.stringify(error))
-        reject(false)
+
       }
     })
   })
-  // return wx.requestPaymentAsync({
-  //   appId: appConfig.appId,
-  //   timeStamp: '' + orderParams.timeStamp,
-  //   nonceStr: orderParams.nonceStr,
-  //   package: 'prepay_id=' + orderParams.prepayId,
-  //   signType: 'MD5',
-  //   paySign: orderParams.paySign,
-  // }).then(res => {
-  //   wx.showToast({
-  //     title: '支付成功！',
-  //     icon: 'success',
-  //     duration: 2000
-  //   })
-  //   console.log('@@Pay Success: ' + JSON.stringify(res))
-  //   return res
-  // }).catch((error) => {
-  //   console.log('@@Pay fail: ' + JSON.stringify(error))
-    
-  //   if (error.errMsg == 'requestPayment:cancel') {
-  //     console.log('取消支付');
-  //   } else {
-  //     wx.showToast({
-  //       title: '支付失败,请重试!',
-  //       icon: 'success',
-  //       duration: 5000
-  //     })
-  //   }
-  //   return error
-  // })
 }
 
 export function makePayment(payDic) {
-
+  // return new Promise((resolve, reject) => {
   return getBrandWCPayRequestParams(payDic).then((orderParams) => {
-    
-    if (orderParams.result) {
+      
+      if (orderParams.result) {
 
-      wx.setStorageSync('prepayOrderParams', {
-        appId: appConfig.appId,
-        timeStamp: '' + orderParams.timeStamp,
-        nonceStr: orderParams.nonceStr,
-        package: 'prepay_id=' + orderParams.prepayId,
-        signType: 'MD5',
-        paySign: orderParams.paySign,
-      })
+        wx.setStorageSync('prepayOrderParams', orderParams)
 
-      return new Promise((resolve, reject) => {
-        wx.requestPayment({
-          appId: appConfig.appId,
-          timeStamp: '' + orderParams.timeStamp,
-          nonceStr: orderParams.nonceStr,
-          package: 'prepay_id=' + orderParams.prepayId,
-          signType: 'MD5',
-          paySign: orderParams.paySign,
-          success: (res) => {
+        return requestPayment(orderParams);
 
-            wx.showToast({
-              title: '支付成功！',
-              icon: 'success',
-              duration: 2000
-            })
-            console.log('@@Pay Success: ' + JSON.stringify(res))
-            resolve(true)
-          },
-          fail: (error) => {
-
-            if (error.errMsg == 'requestPayment:cancel') {
-              console.log('取消支付');
-            } else {
-              wx.showToast({
-                title: '支付失败,请重试!',
-                icon: 'success',
-                duration: 5000
-              })
-            }
-            console.log('@@Pay fail: ' + JSON.stringify(error))
-            reject(error)
-          }
+      } else {
+        wx.showToast({
+          title: '下单失败!',
+          icon: 'success',
+          duration: 5000
         })
-      })
-      // wx.requestPaymentAsync({
-      //   appId: appConfig.appId,
-      //   timeStamp: '' + orderParams.timeStamp,
-      //   nonceStr: orderParams.nonceStr,
-      //   package: 'prepay_id=' + orderParams.prepayId,
-      //   signType: 'MD5',
-      //   paySign: orderParams.paySign,
-      // }).then(res => {
-      //   wx.showToast({
-      //     title: '支付成功！',
-      //     icon: 'success',
-      //     duration: 2000
-      //   })
+        return '下单失败'
+      }
 
-      //   console.log('@@Pay Success: ' + JSON.stringify(res))
-      // })
-    } else {
-      wx.showToast({
-        title: '支付失败,请重试!',
-        icon: 'success',
-        duration: 5000
-      })
-    }
-
-  }).catch((error) => {
-    console.log('@@Pay fail: ' + JSON.stringify(error))
-
-    if (error.errMsg == 'requestPayment:cancel') {
-      console.log('取消支付');
-    } else {
-      wx.showToast({
-        title: '支付失败,请重试!',
-        icon: 'success',
-        duration: 5000
-      })
-    }
-
-  })
-
+    })
+  // })
 }

@@ -186,7 +186,10 @@ export function queryPendingCommentList (openId) {
 }
 // 关闭订单 
 export function uploadCloseUppayOrder (orderid) {
-  return urlencodePostRequest('order/closeUnpaidOrderList', orderid)
+  // return urlencodePostRequest('order/closeUnpaidOrderList', orderid)
+  return jsonGetRequest('order/closeUnpaidOrderList', {
+    orderId: orderid
+  })
 }
 
 // 评价 提交
