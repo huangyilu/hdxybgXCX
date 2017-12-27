@@ -102,6 +102,9 @@ page {
     padding: 20rpx 30rpx;
     font-size: 30rpx;
 }
+.datepicker-view .title radio-group {
+  display: inline-block;
+}
 .datepicker-view .title input{
     border-bottom: 1px #E5E5E5 solid;
     display: inline-block;

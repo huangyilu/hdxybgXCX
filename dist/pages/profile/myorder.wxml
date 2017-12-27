@@ -1,5 +1,7 @@
 <!--pages/profile/myorder.wxml-->
 
+<import src="../../templates/myorder-item/myorder-item.wxml"/>
+
 <view class="weui-tab">
   <view class="weui-navbar">
       <block wx:for-items="{{ navbarTabs }}" wx:key="{{ index }}">
@@ -13,53 +15,21 @@
 
     <!-- 选项一的内容 -->
     <view class="weui-tab__content" hidden="{{ activeIndex != 0 }}" style='border-top-style:none;'>
-    
-      <block wx:for="{{ appointmentList }}" wx:for-item="appLists" wx:key="{{ index }}"  >
-      <view class='cell'>
-        <view class='cell-title'>
-          <text class='second-txt-color'>预约日期：{{ appLists.time }}</text>
-        </view>
-        <!-- 预约码 -->
-        <!-- <view class='reservation-code-view'>
-          <view class='text-view second-txt-color'>预约码： <text>{{ appLists.reservationCode }}</text></view>
-          <view class='img-view'>
-            <image mode='aspectFit' src='{{ appLists.reservationCodeImg }}'></image>
-          </view>
-        </view> -->
-        <!-- 预约码 -->
-        <view>
-          <block wx:for="{{ appLists.appList }}" wx:for-item="apit" wx:key="{{ index }}">
-          <view class='appointment-cell' data-title='{{ apit.title }}' bindtap='bindAppointmentTap'>
-            <image class='cellImg' src='{{ apit.imgUrl }}' mode='aspectFill'></image>
-            <view class='text'>
-              <view>{{ apit.title }}</view>
-              <view class='second-txt-color'> 
-                <text>{{ apit.name }} {{ apit.floor }}</text>
-                <text style='margin-left:30rpx;'>{{ apit.floorHeight }}</text>
-              </view>
-              <view class='price'>¥ {{ apit.price }} <text class='second-txt-color' style='float:right;'>x{{ apit.nums }}</text> </view>
-            </view>
-          </view>
-          </block>
-        </view>
-        <!-- 附加 价钱 等信息 -->
-        <view class='price-cell-view'>
-          <!-- 定金 -->
-          <view class='cancel-cell-btn' id='{{ index }}' data-orderid='{{ appLists.orderid }}' bindtap='bindCancelOrderTap'>取消订单</view>
-          <text >应付定金：<text class='price-p'>{{ appLists.prePrice }}</text></text>
-          <view id='{{ index }}' bindtap='bindPrePayCellTap'>付定金</view>
-        </view>
 
-      </view>
-      </block>
-
-      <view class='remind-empty-view' wx:if='{{ appointmentList.length <= 0 }}'>暂无待付款订单...</view>
+      <!-- 测试 -->
+      <template is="myorder-item" data="{{ orderList }}"/>
+      <!-- 测试 -->
+      <view class='remind-empty-view' wx:if='{{ orderList.length <= 0 }}'>暂无待付款订单...</view>
 
     </view>
     <!-- 选项一结束 -->
     
     <!-- 选项二的内容 -->
     <view class="weui-tab__content" hidden="{{ activeIndex != 1 }}" style='border-top-style:none;'>
+
+      <!-- 测试 -->
+      <template is="myorder-item" data="{{ orderList }}"/>
+      <!-- 测试 -->
 
       <!-- <view style='height:100%;margin-bottom:170rpx;'> -->
       <block wx:for="{{ paymentList }}" wx:for-item="pay" wx:key="{{ index }}" >
@@ -117,13 +87,18 @@
         </view>
       </view> -->
 
-      <view class='remind-empty-view' wx:if='{{ paymentList.length <= 0 }}'>暂无付尾款订单...</view>
+      <view class='remind-empty-view' wx:if='{{ orderList.length <= 0 }}'>暂无付尾款订单...</view>
 
     </view>
     <!-- 选项二结束 -->
 
     <!-- 选项三开始 -->
     <view class="weui-tab__content" hidden="{{ activeIndex != 2 }}" style='border-top-style:none;'>
+
+      <!-- 测试 -->
+      <template is="myorder-item" data="{{ orderList }}"/>
+      <!-- 测试 -->
+
     <block wx:for="{{ commentList }}" wx:for-item="comt" wx:key="{{ index }}" >
     <view class='cell'>
       <view class='cell-title'>
@@ -152,7 +127,7 @@
               </view>
             </view>
             <view>
-              <view class='comment-btn' id='{{ index }}' data-payid='{{ comt.payid }}' bindtap='bindCommentBtnTap'>评价</view>
+              <view class='comment-btn' id='{{ index }}' bindtap='bindCommentBtnTap'>评价</view>
             </view>
           </view>
         </view>
@@ -161,7 +136,7 @@
     </view>
     </block>
 
-    <view class='remind-empty-view' wx:if='{{ commentList.length <= 0 }}'>暂无待评价订单...</view>
+    <view class='remind-empty-view' wx:if='{{ orderList.length <= 0 }}'>暂无待评价订单...</view>
 
     </view>
     <!-- 选项三结束 -->

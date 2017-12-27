@@ -444,17 +444,18 @@ export function getLocalShoppingImgurl(name, item) {
   }
 }
 // 预付定金
-export function formatuploadPrepay(list, reservedDate, customerName, tel, totalPrice, prepayPrice, hallTable, desc, comboStyle, isStage, celePrice, openid) {
+export function formatuploadPrepay(list, reservedDate, customerName, tel, gender, totalPrice, prepayPrice, hallTable, desc, comboStyle, isStage, celePrice, openid) {
   
   var dic = {
     hotelId: +appConfig.hotelId,
     customerName: customerName ? customerName : '',
     tel: tel ? tel : '',
+    gender: gender ? gender : '',
     openId: openid ? openid : '',
     reservedDates: reservedDate ? reservedDate : '',
     desc: desc ? desc : '',
     count: totalPrice ? totalPrice : '',
-    prePay: prepayPrice ? prepayPrice : '',
+    prePay: prepayPrice ? prepayPrice : ''
   }
   var talentids = [];
 
@@ -487,13 +488,15 @@ export function formatMyorderAppointmentList (list) {
 }
 export function formatMyorderAppointmentItem (item) {
   return {
-    orderid: item.id,
+    orderId: item.id,
+    open: false,
     time: moment(item.reservedDate).format('YYYY-MM-DD'),
     reservationCode: item.vaidateCode,
     reservationCodeImg: item.twoBarCode,
     prePrice: item.obligation,
     countPrice: item.count,
-    appList: this.formatAppList(item.hall, item.combo, item.celebration, item.talent)
+    addInfo: '待付款',
+    payList: this.formatAppList(item.hall, item.combo, item.celebration, item.talent)
   }
 }
 export function formatAppList (hall, combo, celebration, talent) {
@@ -586,6 +589,8 @@ export function formatMyorderPayRetainagePriceItem (item) {
     prePrice: item.prePayPrice ? item.prePayPrice : 0,
     finalyPrice: item.obligation ? item.obligation : 0,
     checked: true,
+    open: false,
+    addInfo: '付尾款',
     payList: this.formatAppList(item.hall, item.combo, item.celebration, item.talent)
   }
 }
@@ -596,9 +601,13 @@ export function formatMyorderComments (list) {
 }
 export function formatMyorderCommentsItem (item) {
   return {
-    payid: item.id,
+    orderId: item.id,
+    open: false,
     time: moment(item.reservedDate).format('YYYY-MM-DD'),
     totalPrice: item.count,
+    addInfo: '待评价',
+    titleImg: item.hall[0].img,
+    titleName: item.hall[0].name,
     payList: this.formatAppList(item.hall, item.combo, item.celebration, item.talent)
   }
 }

@@ -23,14 +23,15 @@ Page({
     // 尾款
     retainagePrice: 0,
 
-    // 预约单 目前先用预约单代替 待付款
+    // 待付款
     appointmentList: [],
-
     // 付尾款
     paymentList: [],
-
     // 待评价
-    commentList: []
+    commentList: [],
+    // 综合 
+    orderList: []
+
   },
 
   /**
@@ -44,66 +45,62 @@ Page({
       sliderLeft: (res.windowWidth / this.data.navbarTabs.length - sliderWidth) / 2,
       openid: wx.getStorageSync('openid').val
     });
-
-    //获取待付款订单
-    // this.getAppointments();
-    // 获取待评价订单
-    // this.getPendingComments();
-
-    
-    
   
   },
   onShow: function (options) {
     // Do something when show.
 
-    //获取待付款订单
-    this.getAppointments();
-    // 获取待评价订单
-    // this.getPendingComments();
-    //获取 付尾款 订单
-    // this.getPayRetainagePrice();
+    this.getLoadList(this.data.activeIndex);
 
+  },
+  // 点击 展开
+  bingKindToggleTap: function (e) {
+    var id = e.currentTarget.id,
+      list = this.data.orderList;
+    for (var i = 0, len = list.length; i < len; ++i) {
+      if (list[i].orderId == id) {
+        list[i].open = !list[i].open
+      }
+    }
+    this.setData({
+      orderList: list
+    });
   },
 
   // tab切换
   navbarTabClick: function (e) {
     this.setData({
       sliderOffset: e.currentTarget.offsetLeft,
-      activeIndex: e.currentTarget.id
+      activeIndex: +e.currentTarget.id
     });
 
-    switch (+e.currentTarget.id) {
+    this.getLoadList(+e.currentTarget.id);
+  
+  },
+  // 选择加载的 订单
+  getLoadList (index) {
+    switch (index) {
       case 0:
-        // if (this.data.appointmentList.length <= 0) {
-          //获取 待付款 订单
-          this.getAppointments();
-        // }
+        //获取 待付款 订单
+        this.getAppointments();
         break;
       case 1:
-        // if (this.data.paymentList.length <= 0) {
-          //获取 付尾款 订单
-          this.getPayRetainagePrice();
-        // }
+        //获取 付尾款 订单
+        this.getPayRetainagePrice();
         break;
       case 2:
-        // if (this.data.commentList.length <= 0) {
-          //获取 待评价 订单
-          this.getPendingComments();
-        // }
+        //获取 待评价 订单
+        this.getPendingComments();
         break;
     }
-    
-
   },
-
   // 获取数据
   getPendingComments() {
     // 待评价订单
     HotelDataService.queryPendingCommentList(this.data.openid).then((result) => {
       this.setData({
         commentResult: result,
-        commentList: hoteldata.formatMyorderComments(result)
+        orderList: hoteldata.formatMyorderComments(result)
       })
     }).catch((error) => {
       console.log(error);
@@ -114,10 +111,9 @@ Page({
     HotelDataService.queryUnpaidOrderList(this.data.openid).then((result) => {
       // console.log("queryUnpaidOrderList success = " + JSON.stringify(result));
       this.setData({
-        appointmentList: hoteldata.formatMyorderAppointmentList(result)
+        orderList: hoteldata.formatMyorderAppointmentList(result)
       })
       // console.log("appointmentList success = " + JSON.stringify(this.data.appointmentList));
-      
     }).catch((error) => {
       console.log(error);
     })
@@ -127,13 +123,12 @@ Page({
     HotelDataService.queryAppointmentList(this.data.openid).then((result) => {
       // console.log("uploadFinalPay success = " + JSON.stringify(result));
       this.setData({
-        paymentList: hoteldata.formatMyorderPayRetainagePrice(result)
+        orderList: hoteldata.formatMyorderPayRetainagePrice(result)
       })
-      console.log("appointmentList success = " + JSON.stringify(this.data.paymentList));
+      // console.log("appointmentList success = " + JSON.stringify(this.data.paymentList));
     }).catch((error) => {
       console.log(error);
     })
-
   },
 
   bindAppointmentTap (e) {
@@ -156,43 +151,39 @@ Page({
         url: '../celebrationDetails/celebrationDetails',
       })
     }
-
   },
   // 待评价
   bindCommentBtnTap (e) {
 
-    var payid = e.currentTarget.dataset.payid;
     var index = e.currentTarget.id;
     wx.navigateTo({
       url: '../comment/comment?comment=' + Base64.encodeURI(JSON.stringify(this.data.commentResult[index])),
     })
   },
 
-  // 付尾款的
-  bindCheckboxChange (e) {
-    console.log(e.detail.value);
+  // 付尾款 选项
+  // bindCheckboxChange (e) {
+  //   console.log(e.detail.value);
 
-    var depositPrice = 0;
-    var retainagePrice = 0;
+  //   var depositPrice = 0;
+  //   var retainagePrice = 0;
 
-    if (e.detail.value.length > 0) {
-      var checkedIndex = +e.detail.value[0];
-      var paymentList = this.data.paymentList[checkedIndex];
-      var payid = paymentList.payid;
-      depositPrice = paymentList.depositPrice + this.data.depositPrice;
-      retainagePrice = paymentList.retainagePrice + this.data.retainagePrice;
-      console.log(payid);
-    }
+  //   if (e.detail.value.length > 0) {
+  //     var checkedIndex = +e.detail.value[0];
+  //     var paymentList = this.data.paymentList[checkedIndex];
+  //     var payid = paymentList.payid;
+  //     depositPrice = paymentList.depositPrice + this.data.depositPrice;
+  //     retainagePrice = paymentList.retainagePrice + this.data.retainagePrice;
+  //     console.log(payid);
+  //   }
 
-    this.setData({
-      depositPrice: depositPrice ,
-      retainagePrice: retainagePrice 
-    })
+  //   this.setData({
+  //     depositPrice: depositPrice ,
+  //     retainagePrice: retainagePrice 
+  //   })
+  //   // console.log(totalPrice);
+  // },
 
-
-    // console.log(totalPrice);
-
-  },
   // 付尾款 最后确认
   bindPaymentTap () {
     wx.navigateTo({

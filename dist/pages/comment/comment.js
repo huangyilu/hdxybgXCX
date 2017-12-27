@@ -211,10 +211,10 @@ Page({
     console.log('threeScore = ' + threeScore);
     console.log('fourScore = ' + fourScore);
 
-    if (text.length <= 0) {
+    if (!this.getIsCommentText()) {
       wx.showModal({
-        title: '提示',
-        content: '您还没写评论呢~',
+        title: '',
+        content: '您忍心留下空白吗？',
         success: function (res) {
           if (res.confirm) {
             console.log('用户点击确定')
@@ -232,6 +232,33 @@ Page({
     // 数据处理
     // this.getCommentData()
 
+  },
+  // 判断是否 全部填写文字 是否全部打分
+  getIsCommentText(){
+    var commentEditList = this.data.commentEditList;
+    var scoringItems = this.data.scoringItems;
+    var istext = true;
+    for (var i = 0; i < commentEditList.length; i++) {
+      if (commentEditList[i].commentText == '') {
+        istext = false
+      }
+      if (commentEditList[i].score == 0 && commentEditList[i].title != '婚礼人才') {
+        istext = false
+      }
+      if (commentEditList[i].title == '婚礼人才') {
+        for (var k = 0; k < commentEditList[i].talentlist.length; k++) { 
+          if (commentEditList[i].talentlist[k].score == 0) {
+            istext = false
+          }
+        }
+      }
+    }
+    for (var j = 0; j < scoringItems.length; j++) {
+      if (scoringItems[j].score == 0) {
+        istext = false
+      }
+    }
+    return istext;
   },
   getCommentData () {
     

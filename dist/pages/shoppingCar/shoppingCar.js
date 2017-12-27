@@ -53,6 +53,12 @@ Page({
       now_month: '',
       now_day: ''
     },
+
+    // 性别
+    genderItems: [
+      { name: '女士', value: '女士', checked: 'true' },
+      { name: '先生', value: '先生' },
+    ]
   },
 
   onShow: function () {
@@ -392,7 +398,7 @@ Page({
   },
   bindUploadPrepay (e) {
 
-    var info = hoteldata.formatuploadPrepay(this.data.shoppingcarinstore, this.data.reservedDate, this.data.contacts.contact, this.data.contacts.contactInformation, this.data.totalPrice, +this.data.prepayPrice, +this.data.tabNumsText, '酒店服务', this.data.packageStage.packName, this.data.packageStage.stage, this.data.packageStage.packPrice, this.data.openId);
+    var info = hoteldata.formatuploadPrepay(this.data.shoppingcarinstore, this.data.reservedDate, this.data.contacts.contact, this.data.contacts.contactInformation, this.data.contacts.gender, this.data.totalPrice, +this.data.prepayPrice, +this.data.tabNumsText, '酒店服务', this.data.packageStage.packName, this.data.packageStage.stage, this.data.packageStage.packPrice, this.data.openId);
 
     console.log('info ... ' + JSON.stringify(info));
 
@@ -594,6 +600,11 @@ Page({
   bindContactInfoInput(e) {
     this.setData({
       'contacts.contactInformation': e.detail.value
+    })
+  },
+  bindGenderCheckboxChange(e) {
+    this.setData({
+      'contacts.gender': e.detail.value
     })
   },
 

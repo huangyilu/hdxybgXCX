@@ -89,6 +89,7 @@ const conf = {
     const date = new Date();
 		const thisMonthDays = this.getThisMonthDays(year, month);
     var dayStr = date.getDate();
+    var reserved = false;
 
 		for (let i = 1; i <= thisMonthDays; i++) {
       var choosed = false;
@@ -103,12 +104,18 @@ const conf = {
       if (luckydays[i - 1].goodFlag == true) {
         lunar = '吉日';
       }
+      
+      reserved = luckydays[i - 1].reservedFlag;
+      // 今天以前不可选 变灰
+      if (i <= dayStr && month <= date.getMonth() + 1 && year <= date.getFullYear()) {
+        reserved = true;
+      }
 
       days.push({
         day: i,
         choosed: choosed,
         lunar: lunar,
-        reserved: luckydays[i - 1].reservedFlag
+        reserved: reserved
       });
 
 		}

@@ -320,3 +320,9 @@ page {
     font-size: 26rpx;
     color: #666666;
 }
+
+
+/* float  */
+.float-right {
+  float: right;
+}

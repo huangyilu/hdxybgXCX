@@ -92,16 +92,37 @@
 <!--填写 信息 时间 弹窗 -->
 <view class='selectDate-bgview' hidden='{{ reserveddateData.dateViewHidden }}'>
   <view class='datepicker-view'>
+
+    <!-- 联系人 -->
     <view class='title'>
       联系人：<input bindinput="bindContactInput" placeholder='请填写联系人'></input>
     </view>
+    <!-- 性别 -->
+    <view class='title'>
+      性别：
+      <radio-group bindchange="bindGenderCheckboxChange">
+        <label wx:for="{{ genderItems }}" wx:key='{{ item.name }}'>
+          <radio value="{{ item.name }}" checked="{{ item.checked }}"/>{{ item.value }}
+        </label>
+      </radio-group>
+    </view>
+    <!-- 联系电话 -->
     <view class='title'>
       联系电话：<input bindinput="bindContactInfoInput" type='number' placeholder='请填写联系电话'></input>
     </view>
+    <!-- 预定日期 -->
     <view class='title'>
-      预订日期：{{ reserveddateData.choose_year }}-{{ reserveddateData.choose_month }}-{{ reserveddateData.choose_day }}
+      预订日期：{{ reserveddateData.choose_year }}-{{ reserveddateData.choose_month }}-{{ reserveddateData.choose_day }} 
+      <text class='reserved-text'>{{ reserveddateData.reserved ? "不可预定" : "" }}</text>
     </view>
-
+    <!-- 桌数 -->
+    <view class='title'>
+      <text class='table-text'>桌数：</text>
+      <view class="table-slider-view">
+        <slider activeColor='#F15A4A' bindchange="bindTableSliderChange" min="{{ ballInfo.minTable }}" max="{{ ballInfo.maxTable }}" show-value/>
+      </view>
+    </view>
+    <!-- 日期选择器 -->
     <view class='picker'>
       <picker-view class="flex" indicator-style="height: 50px;" value="{{ reserveddateData.picker_value }}" bindchange="pickerChange">
         <picker-view-column>
@@ -115,10 +136,10 @@
         </picker-view-column>
       </picker-view> 
     </view>
-
+    <!-- 按钮 -->
     <view class='weui-flex picker-btns'>
       <view class='weui-flex__item' style='border-right:1px #f1f1f1 solid;' bindtap='bindCancelBtnTap'>取消</view>
-      <view class='weui-flex__item' style='color:#62b900;' bindtap='bindConfirmBtnTap'>确定</view>
+      <view class='weui-flex__item' style='{{ reserveddateData.reserved ? "color:#666;" : "color:#62b900;" }}' bindtap='bindConfirmBtnTap'>确定</view>
     </view>
 
   </view> 

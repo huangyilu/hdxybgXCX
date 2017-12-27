@@ -222,7 +222,7 @@
     width: 90%;
     background-color: white;
     border-radius: 10rpx;
-    margin: 15% auto;
+    margin: 10% auto;
     font-size: 30rpx;
 }
 
@@ -234,6 +234,9 @@
     border-bottom: 1px #E5E5E5 solid;
     display: inline-block;
     font-size: 30rpx;
+}
+.datepicker-view .title radio-group {
+  display: inline-block;
 }
 .picker {
   margin-bottom: 30rpx;

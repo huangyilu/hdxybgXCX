@@ -38,8 +38,14 @@ Page({
     // 联系人 方式
     contacts: {
       contact: '',
-      contactInformation: ''
-    }
+      contactInformation: '',
+      gender: '女士'
+    },
+    // 性别
+    genderItems: [
+      { name: '女士', value: '女士', checked: 'true' },
+      { name: '先生', value: '先生' },
+    ]
   },
 
   /**
@@ -102,45 +108,19 @@ Page({
   // 页面跳转
   goWeddingTalentPage () {
       
-//    contactsInfoStore.get('reservedDate').then(result => {
-//        
-//        console.log('contactsInfoStore success .. ' + result);
-//
-////        if (result) {
-//          wx.navigateTo({
-//            url: '../weddingTalent/weddingTalent?reservedDate=' + result
-//          })
-////        } else {
-////          // 弹窗选择日期
-////          this.setData({
-////            'reserveddateData.dateViewHidden': false
-////          })
-////        }
-//
-//    }).catch(error => {
-//      console.log('contactsInfoStore .. error' + JSON.stringify(error));
-//        
-//      // 弹窗选择日期
-//      this.setData({
-//        'reserveddateData.dateViewHidden': false
-//      })
-//        
-//    });
-
     var value = wx.getStorageSync('reservedDate');
 //    console.log('reserveddate = ' + value);
       
-      if (value) {
-          wx.navigateTo({
-            url: '../weddingTalent/weddingTalent?reservedDate=' + value
-          })
-      } else {
-          // 弹窗选择日期
-          this.setData({
-            'reserveddateData.dateViewHidden': false
-          })
-      }
-
+    if (value) {
+        wx.navigateTo({
+          url: '../weddingTalent/weddingTalent?reservedDate=' + value
+        })
+    } else {
+        // 弹窗选择日期
+        this.setData({
+          'reserveddateData.dateViewHidden': false
+        })
+    }
 
   },
   goScheduleQueryPage (e) {
@@ -278,14 +258,15 @@ Page({
       data: chooseTime
     })
       
-//    contactsInfoStore.save('reservedDate', chooseTime);
+    //  contactsInfoStore.save('reservedDate', chooseTime);
   },
   saveLocalContacts (contacts) {
     wx.setStorage({
       key: "contacts",
       data: contacts
     })
-//    contactsInfoStore.save('contacts', contacts);
+    // contactsInfoStore.save('contacts', contacts);
+    console.log('save local contacts ' + JSON.stringify(contacts))
   },
 
   bindContactInput (e) {
@@ -296,6 +277,11 @@ Page({
   bindContactInfoInput (e) {
     this.setData({
       'contacts.contactInformation': e.detail.value
+    })
+  },
+  bindGenderCheckboxChange(e) {
+    this.setData({
+      'contacts.gender': e.detail.value
     })
   },
   bindTablesChooseTap () {
