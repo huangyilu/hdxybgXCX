@@ -160,7 +160,7 @@ page {
 }
 
 /* 日历样式 */
-.box {
+/* .box {
     display: flex;
 }
 
@@ -247,7 +247,7 @@ page {
 .bg {
   background-image: linear-gradient(to bottom, #faefe7, #ffcbd7);
   overflow: hidden;
-}
+} */
 
 /* 文字大小 */
 .fs24 {
@@ -325,4 +325,18 @@ page {
 /* float  */
 .float-right {
   float: right;
+}
+.float-left {
+  float: left;
+}
+
+/* text-align */
+.txt-algn-left {
+  text-align: left;
+}
+.txt-algn-right {
+  text-align: right;
+}
+.txt-algn-center {
+  text-align: center;
 }

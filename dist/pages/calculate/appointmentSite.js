@@ -183,7 +183,9 @@ const conf = {
 
     if (!days[idx].notOptional) {
 
-      days[oldChooseDayIndex].choosed = false;
+      if (oldChooseDayIndex < days.length-1) {
+        days[oldChooseDayIndex].choosed = false;
+      }
       days[idx].choosed = true;
 
       this.setData({

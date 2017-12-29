@@ -1,5 +1,7 @@
 /* pages/calculate/appointmentSite.wxss */
 
+@import '../../styles/calculate-style.wxss';
+
 page {
   background-color: white;
 }
