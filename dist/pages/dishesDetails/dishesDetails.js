@@ -63,6 +63,14 @@ Page({
     })
   },
   
+  bindDishesDetailTap (e) {
+    
+    var dishesInfo = e.currentTarget.dataset.dishesinfo;
+    console.log('dishesInfo = ' + JSON.stringify(dishesInfo));
+
+    
+
+  },
   bindDishesImgSwiperChange (e) {
     this.setData({
       dishesImgIndex: e.detail.current

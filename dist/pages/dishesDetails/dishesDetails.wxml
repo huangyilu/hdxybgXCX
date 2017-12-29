@@ -33,7 +33,7 @@
     </view>
 
     <block wx:for="{{ dishes.dishesList }}" wx:key="{{ index }}">
-    <view class='textContent' >
+    <view class='textContent' data-dishesinfo='{{ item }}' bindtap='bindDishesDetailTap'>
       <text>{{ item.name }}</text>
       <image class='delete-icon' wx:if="{{ edit == 1 }}" src='../../images/delete.png' id="{{ index }}" bindtap='bindTextDeleteTap'></image>
     </view>
@@ -50,7 +50,7 @@
 
   </view>
 
-  <!-- 弹窗 -->
+  <!--菜名 弹窗 -->
   <view class='input-bgview' hidden='{{ inputText }}'>
     <view class='input-view'>
       <input bindinput='bindKeyInput' placeholder="请输入一个菜名" type="text" focus="{{ inputTextFocus }}"/>
