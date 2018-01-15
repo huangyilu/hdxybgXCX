@@ -26,10 +26,12 @@
       <view class='comment-view' bindtap='goCommentPage'>
         <image class='comment' src='../../images/comment.png'></image>
       </view>
-      <!-- <view class='foot-btn' data-title='档期查询' bindtap='bindTablesChooseTap'>桌数</view> -->
-      <view class='weui-flex__item foot-btn' data-title='档期查询' bindtap='goScheduleQueryPage'>档期查询</view>
-      <view class='weui-flex__item foot-btn' data-title='预约看场' bindtap='goAppointmentSitePage'>预约看场</view>
-      <view class='foot-btn' bindtap='goWeddingTalentPage'>预定</view>
+      <!-- <view class='weui-flex__item foot-btn' data-title='档期查询' bindtap='goScheduleQueryPage'>档期查询</view> -->
+      <view class='weui-flex__item '>
+        <view class='foot-btn' style='width:150rpx;margin:auto;' data-title='预约看场' bindtap='goAppointmentSitePage'>预约看场</view>
+      </view>
+      
+      <view class='foot-btn' bindtap='goScheduleQueryPage'>预定</view>
     </view>
   </view>
 
@@ -83,7 +85,7 @@
         <picker-view-column>
           <view class="picker-view" wx:for="{{ reserveddateData.picker_day }}" wx:key="{{ item }}" style="line-height: 50px">{{ item }}</view>
         </picker-view-column>
-      </picker-view> 
+      </picker-view>  
     </view>
     <!-- 按钮 -->
     <view class='weui-flex picker-btns'>

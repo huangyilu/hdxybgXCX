@@ -125,7 +125,7 @@ Page({
       this.setData({
         orderList: hoteldata.formatMyorderPayRetainagePrice(result)
       })
-      // console.log("appointmentList success = " + JSON.stringify(this.data.paymentList));
+      console.log("orderList success = " + JSON.stringify(this.data.orderList));
     }).catch((error) => {
       console.log(error);
     })
@@ -140,15 +140,15 @@ Page({
       })
     } else if (title == '菜品') {
       wx.navigateTo({
-        url: '../dishesDetails/dishesDetails',
+        url: '../dishes/dishesDetails',
       })
     } else if (title == '婚礼人才') {
       wx.navigateTo({
-        url: '../talentDetails/talentDetails',
+        url: '../talents/talentDetails',
       })
     } else if (title == '宴会庆典产品') {
       wx.navigateTo({
-        url: '../celebrationDetails/celebrationDetails',
+        url: '../celebration/celebrationDetails',
       })
     }
   },
@@ -194,12 +194,22 @@ Page({
   bindFinalyPayCellTap (e) {
     var index = e.currentTarget.id;
     var orderid = e.currentTarget.dataset.orderid;
+    var obligation = e.currentTarget.dataset.obligation;
 
-    makeFinalPay(orderid, this.data.openid).then((result) => {
+    makeFinalPay(orderid, this.data.openid, obligation).then((result) => {
       console.log('支付 尾款 result...' + JSON.stringify(result));
 
-      //刷新 付尾款 订单
-      this.getPayRetainagePrice();
+      if (result) {
+        //刷新 付尾款 订单
+        this.getPayRetainagePrice();
+      } else {
+        // wx.showToast({
+        //   title: '支付失败!',
+        //   icon: 'success',
+        //   duration: 5000
+        // })
+      }
+
 
     }).catch((error) => {
       console.log('makePayment fail: ' + JSON.stringify(error));
@@ -236,6 +246,10 @@ Page({
       if (result == 'SUCCESS') {
         // 刷新 待付款
         this.getAppointments();
+        // 回到首页
+        wx.switchTab({
+          url: '../hotel/hotel',
+        })
       }
 
     }).catch((error) => {

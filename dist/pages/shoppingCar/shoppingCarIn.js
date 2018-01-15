@@ -17,6 +17,8 @@ Page({
    * 页面的初始数据
    */
   data: {
+    prepagetype: '',
+
     allchecked: true,
     totalPrice: 0,
     prepayPrice: 0,
@@ -40,25 +42,29 @@ Page({
     shoppingtypes: [],
 
     // 弹窗
-    reserveddateData: {
-      dateViewHidden: true,
-      picker_value: '',
-      picker_year: [],
-      picker_month: [],
-      picker_day: [],
-      choose_year: '',
-      choose_month: '',
-      choose_day: '',
-      now_year: '',
-      now_month: '',
-      now_day: ''
-    },
+    // reserveddateData: {
+    //   dateViewHidden: true,
+    //   picker_value: '',
+    //   picker_year: [],
+    //   picker_month: [],
+    //   picker_day: [],
+    //   choose_year: '',
+    //   choose_month: '',
+    //   choose_day: '',
+    //   now_year: '',
+    //   now_month: '',
+    //   now_day: ''
+    // },
 
     // 性别
     genderItems: [
       { name: '女士', value: '女士', checked: 'true' },
       { name: '先生', value: '先生' },
-    ]
+    ],
+
+    // 是否 同时选了人才 和庆典 全部准备好 预约下单
+    isGetReadyMakeAppoint: true,
+    reservedDate: ''
   },
 
   onShow: function () {
@@ -71,26 +77,27 @@ Page({
   onLoad: function (options) {
 
     // 设当前日期
-    var date = new Date();
-    this.setData({
-      'reserveddateData.now_year': date.getFullYear(),
-      'reserveddateData.now_month': date.getMonth() + 1,
-      'reserveddateData.now_day': date.getDate(),
-      ballroomid: options.ballroomid,
-      'reserveddateData.picker_value': moment().format('YYYY-MM-DD'),
-      'reserveddateData.choose_year': moment().format('YYYY'),
-      'reserveddateData.choose_month': moment().format('MM'),
-      'reserveddateData.choose_day': moment().format('DD')
-    })
+    // var date = new Date()
+    // this.setData({
+    //   'reserveddateData.now_year': date.getFullYear(),
+    //   'reserveddateData.now_month': date.getMonth() + 1,
+    //   'reserveddateData.now_day': date.getDate(),
+    //   ballroomid: options.ballroomid,
+    //   'reserveddateData.picker_value': moment().format('YYYY-MM-DD'),
+    //   'reserveddateData.choose_year': moment().format('YYYY'),
+    //   'reserveddateData.choose_month': moment().format('MM'),
+    //   'reserveddateData.choose_day': moment().format('DD')
+    // })
     //初始化 日期选择
-    this.setThisMonthPicArr();
+    // this.setThisMonthPicArr();
 
-    this.getShoppingCarData();
+    // this.getShoppingCarData();
 
 
     this.setData({
       openId: wx.getStorageSync('openid').val,
-      prepayPercent: wx.getStorageSync('prepayPercent')
+      prepayPercent: wx.getStorageSync('prepayPercent'),
+      prepagetype: options.prepagetype ? options.prepagetype : ''
     })
 
   },
@@ -102,18 +109,58 @@ Page({
 
     var types = ['宴会厅', '菜品', '主持人', '策划师', '摄影师', '化妆师', '宴会庆典'];
     var shoppingtyppes = [];
+    var istalent = false;
+    var isCelebration = false;
+    var isBallroom = false;
     result.forEach(item => {
       if (item.title == '婚礼人才') {
         shoppingtyppes.push(item.content.info.talentname);
       } else {
         shoppingtyppes.push(item.title);
       }
+
+      if (item.title == '婚礼人才' && item.selected == true) {
+        istalent = true;
+      }
+      if (item.title == '宴会庆典' && item.selected == true) {
+        isCelebration = true;
+      }
+      if (item.title == '宴会厅' && item.selected == true) {
+        isBallroom = true;
+      }
+
     })
+
+    if (isBallroom) {
+      if (istalent) {
+        if (isCelebration) {
+          // 如果选了婚礼人才 没选庆典 则不可下单
+          this.setData({
+            isGetReadyMakeAppoint: true
+          })
+        } else {
+          this.setData({
+            isGetReadyMakeAppoint: false
+          })
+        }
+      } else {
+        this.setData({
+          isGetReadyMakeAppoint: true
+        })
+      }
+    } else {
+      this.setData({
+        isGetReadyMakeAppoint: false
+      })
+    }
+
     // shoppingtyppes = uniqWith(shoppingtyppes, isEqual);
     console.log('已选的数组 shoppingtyppes...' + JSON.stringify(shoppingtyppes));
 
     var newTypes = difference(types, shoppingtyppes);
     console.log('缺少的数组 new Types .. ' + JSON.stringify(newTypes));
+
+    console.log('isGetReadyMakeAppoint 状态 ...' + this.data.isGetReadyMakeAppoint);
 
     this.setData({
       shoppingtypes: newTypes
@@ -122,29 +169,18 @@ Page({
 
   },
   // 判断是否 填写了 预订日期 联系人 等，如果没有选宴会厅 就是没选
-  checkReserveddate() {
+  // checkReserveddate() {
 
-    //    contactsInfoStore.get('reservedDate').then(result => {
-    //        return true;
-    //    }).catch(error => {
-    //        console.log('contactsInfoStore .. ' + JSON.stringify(error));
-    //        this.setData({
-    //          'reserveddateData.dateViewHidden': false
-    //        })
-    //        return false;
-    //        
-    //    });
+  //   if (!wx.getStorageSync('reservedDate')) {
 
-    if (!wx.getStorageSync('reservedDate')) {
-
-      this.setData({
-        'reserveddateData.dateViewHidden': false
-      })
-      return false;
-    } else {
-      return true;
-    }
-  },
+  //     this.setData({
+  //       'reserveddateData.dateViewHidden': false
+  //     })
+  //     return false;
+  //   } else {
+  //     return true;
+  //   }
+  // },
 
   getAppointments() {
     // 待付款
@@ -159,13 +195,14 @@ Page({
   getShoppingCarData() {
     shoppingCarStore.get('shoppingcar').then(result => {
 
-      console.log('get shoppingcar...' + JSON.stringify(result));
-
-      this.setData({
-        shoppingcarinstore: result,
-        paymentList: hoteldata.formatShoppingcar(result)
-      })
       this.getMaxMinTable(result);
+      this.setData({
+        shoppingcarinstore: hoteldata.formatShoppingcarInStore(result),
+        paymentList: hoteldata.formatShoppingcar(result, this.data.tabNumsText)
+      })
+
+      console.log('get shoppingcar...' + JSON.stringify(hoteldata.formatShoppingcarInStore(result)));
+
       this.getTotalPrice(this.data.paymentList);
       // 检查 购物是否完整
       this.checkShoppingCar(result);
@@ -175,29 +212,23 @@ Page({
       console.log(error);
     });
 
-    //  取 联系人信息 
+    //取 联系人信息 日期等
+    var contacts = wx.getStorageSync('contacts') ? wx.getStorageSync('contacts') : '';
+    var reservedDate = wx.getStorageSync('reservedDate') ? wx.getStorageSync('reservedDate') : '';
+    var isGetReadyMakeAppoint = this.data.isGetReadyMakeAppoint;
+
+    if (contacts == '' || reservedDate == '') {
+      isGetReadyMakeAppoint = false;
+    }
+
+    console.log('contacts = ' + contacts);
+    console.log('reservedDate = ' + reservedDate);
+
     this.setData({
-      contacts: wx.getStorageSync('contacts'),
-      reservedDate: wx.getStorageSync('reservedDate')
+      contacts: contacts,
+      reservedDate: reservedDate,
+      isGetReadyMakeAppoint: isGetReadyMakeAppoint
     })
-
-    //    if ( this.checkReserveddate() ) {
-    //        contactsInfoStore.get('reservedDate').then(result => {
-    //         this.setData({
-    //             reserveddate
-    //         })
-    //        }).catch(error => {
-    //            console.log('contactsInfoStore .. ' + JSON.stringify(error));
-    //        });
-    //        contactsInfoStore.get('contacts').then(result => {
-    //         this.setData({
-    //             contacts
-    //         })
-    //        }).catch(error => {
-    //            console.log('contactsInfoStore .. ' + JSON.stringify(error));
-    //        });
-    //    }  
-
 
   },
   // 获取最大桌数 最小桌数 宴会庆典 全息信息等
@@ -269,20 +300,31 @@ Page({
       shoppingcarinstore: shoppingcarinstore
     });
     this.getTotalPrice(this.data.paymentList);
+    // 检查 购物是否完整
+    this.checkShoppingCar(this.data.shoppingcarinstore);
   },
   bindAllCheckboxChange(e) {
     // console.log(e);
     var allchecked = e.currentTarget.dataset.checked;
     // console.log(allchecked);
     var paymentList = this.data.paymentList;
+    var shoppingcarinstore = this.data.shoppingcarinstore;
+
     paymentList.forEach(function (paylist, j) {
       paylist.checked = !allchecked;
     })
+    shoppingcarinstore.forEach(function (storelist, j) {
+      storelist.selected = !allchecked;
+    })
+
     this.setData({
       paymentList: paymentList,
-      allchecked: !allchecked
+      allchecked: !allchecked,
+      shoppingcarinstore: shoppingcarinstore
     })
     this.getTotalPrice(this.data.paymentList);
+    // 检查 购物是否完整
+    this.checkShoppingCar(this.data.shoppingcarinstore);
   },
   bindOrderEditTap(e) {
 
@@ -331,7 +373,8 @@ Page({
 
     var shopppingid = e.currentTarget.dataset.shopppingid,
       payList = this.data.paymentList,
-      editType = e.currentTarget.dataset.type;
+      editType = e.currentTarget.dataset.type,
+      shoppingcarinstore = this.data.shoppingcarinstore;
 
     if (editType == 'edit') {
       payList[shopppingid].symbolEdit = 'true';
@@ -377,12 +420,15 @@ Page({
       paymentList: payList
     })
 
+    //保存桌数
+    wx.setStorageSync('ballTablenNum', payList[shopppingid].nums);
+
     this.getTotalPrice(this.data.paymentList);
 
   },
   // 付定金
   bindPayTap(e) {
-    if (this.checkReserveddate()) {
+    // if (this.checkReserveddate()) {
       // 判断 是否 有未付款的 订单 如果有，则不可以再下单
       if (this.data.appointmentList.length > 0) {
         //还有未 付款的 订单
@@ -391,10 +437,18 @@ Page({
           content: '您还有未付定金的订单！请付款后再下单！',
         })
       } else {
-        // 上传 资料
-        this.bindUploadPrepay();
+        // 判断 是否 同时选了人才 和庆典 
+        if (this.data.isGetReadyMakeAppoint) {
+          // 上传 资料
+          this.bindUploadPrepay();
+        } else {
+          wx.showModal({
+            title: '提示！',
+            content: '选了人才一定要选宴会庆典哦！',
+          })
+        }
       }
-    }
+    // }
   },
   bindUploadPrepay(e) {
 
@@ -404,39 +458,80 @@ Page({
 
     // 发起支付
     makePayment(info).then((result) => {
-      console.log('支付 result...' + JSON.stringify(result));
+      console.log('makePayment result...' + JSON.stringify(result));
 
       if (result == true) {
-        // 清空 本地购物车联系人 预定日期
-        this.removeSavedContacts();
         // 跳转 我的订单 付尾款
-        wx.navigateTo({
-          url: '../profile/myorder',
+        wx.switchTab({
+          url: '../profile/profile',
+          success: function () {
+            wx.navigateTo({
+              url: '../profile/myorder?swipindex=1',
+            })
+          }
         })
-      } else if (result == '下单失败') {
-
-      } else {
         // 清空 本地购物车联系人 预定日期
         this.removeSavedContacts();
+
+      } else if (result == false) {
         // 跳转 我的订单 待付款
-        wx.navigateTo({
-          url: '../profile/myorder',
+        wx.switchTab({
+          url: '../profile/profile',
+          success: function () {
+            wx.navigateTo({
+              url: '../profile/myorder',
+            })
+          }
         })
+        // 清空 本地购物车联系人 预定日期
+        this.removeSavedContacts();
       }
 
     }).catch((error) => {
       console.log('makePayment fail: ' + JSON.stringify(error));
 
-      if (!error) {
+      if (error == false) {
         // 跳转 我的订单 待付款
-        wx.navigateTo({
-          url: '../profile/myorder',
+        wx.switchTab({
+          url: '../profile/profile',
+          success: function () {
+            wx.navigateTo({
+              url: '../profile/myorder',
+            })
+          }
         })
         // 清空 本地购物车联系人 预定日期
         this.removeSavedContacts();
       }
+      if (error == 1) {
+        // 清空 本地购物车联系人 预定日期
+        this.removeSavedContacts();
+        // 跳转 首页
+        wx.switchTab({
+          url: '../hotel/hotel',
+        })
+      } else if (error == 2) {
+        // 跳转 首页
+        wx.switchTab({
+          url: '../hotel/hotel',
+        })
+      }
 
     })
+
+  },
+  bindMissingShoppingTypesTap(e) {
+
+    // 注意 此处 与 外部 购物车 不一样 的操作！
+    if (this.data.prepagetype == 'wedtalt') {
+      wx.navigateBack({
+        delta: 1
+      })
+    } else {
+      wx.navigateBack({
+        delta: 2
+      })
+    }
 
   },
 
@@ -483,15 +578,6 @@ Page({
 
     });
 
-    //    contactsInfoStore.clear('contacts').finally(() => {
-    //      console.log('removeStorage contacts')
-    //    });
-    //
-    //    contactsInfoStore.clear('reservedDate').finally(() => {
-    //      console.log('removeStorage reservedDate')
-    //    });
-    //      
-
     wx.removeStorage({
       key: 'reservedDate',
       success: function (res) {
@@ -506,129 +592,127 @@ Page({
     })
   },
   // 填写联系人电话选预约日期
-  pickerChange(e) {
-    const val = e.detail.value;
+  // pickerChange(e) {
+  //   const val = e.detail.value;
 
-    var choose_year = this.data.reserveddateData.picker_year[val[0]],
-      choose_month = this.data.reserveddateData.picker_month[val[1]],
-      choose_day = this.data.reserveddateData.picker_day[val[2]];
+  //   var choose_year = this.data.reserveddateData.picker_year[val[0]],
+  //     choose_month = this.data.reserveddateData.picker_month[val[1]],
+  //     choose_day = this.data.reserveddateData.picker_day[val[2]];
 
-    this.setData({
-      'reserveddateData.choose_year': choose_year,
-      'reserveddateData.choose_month': choose_month,
-      'reserveddateData.choose_day': choose_day
-    })
-  },
-  getThisMonthDays(year, month) {
-    return new Date(year, month, 0).getDate();
-  },
-  setThisMonthPicArr() {
-    var now_year = this.data.reserveddateData.now_year,
-      now_month = this.data.reserveddateData.now_month,
-      now_day = this.data.reserveddateData.now_day;
+  //   this.setData({
+  //     'reserveddateData.choose_year': choose_year,
+  //     'reserveddateData.choose_month': choose_month,
+  //     'reserveddateData.choose_day': choose_day
+  //   })
+  // },
+  // getThisMonthDays(year, month) {
+  //   return new Date(year, month, 0).getDate();
+  // },
+  // setThisMonthPicArr() {
+  //   var now_year = this.data.reserveddateData.now_year,
+  //     now_month = this.data.reserveddateData.now_month,
+  //     now_day = this.data.reserveddateData.now_day;
 
-    var picker_year = [],
-      picker_month = [],
-      picker_day = [];
-    for (var i = now_year; i <= (now_year + 100); i++) {
-      picker_year.push(i);
-    }
-    for (var i = 1; i <= 12; i++) {
-      if (i < 10) {
-        i = '0' + i;
-      }
-      picker_month.push(i);
-    }
-    var end_day = this.getThisMonthDays(now_year, now_month);
-    for (var i = 1; i <= end_day; i++) {
-      if (i < 10) {
-        i = '0' + i;
-      }
-      picker_day.push(i);
-    }
-    var idx_year = picker_year.indexOf(now_year);
-    var idx_month = picker_month.indexOf(now_month);
-    var idx_day = picker_day.indexOf(now_day);
+  //   var picker_year = [],
+  //     picker_month = [],
+  //     picker_day = [];
+  //   for (var i = now_year; i <= (now_year + 100); i++) {
+  //     picker_year.push(i);
+  //   }
+  //   for (var i = 1; i <= 12; i++) {
+  //     if (i < 10) {
+  //       i = '0' + i;
+  //     }
+  //     picker_month.push(i);
+  //   }
+  //   var end_day = this.getThisMonthDays(now_year, now_month);
+  //   for (var i = 1; i <= end_day; i++) {
+  //     if (i < 10) {
+  //       i = '0' + i;
+  //     }
+  //     picker_day.push(i);
+  //   }
+  //   var idx_year = picker_year.indexOf(now_year);
+  //   var idx_month = picker_month.indexOf(now_month);
+  //   var idx_day = picker_day.indexOf(now_day);
 
-    this.setData({
-      'reserveddateData.picker_value': [idx_year, idx_month, idx_day],
-      'reserveddateData.picker_year': picker_year,
-      'reserveddateData.picker_month': picker_month,
-      'reserveddateData.picker_day': picker_day
-    });
-  },
-  bindSaveChooseTime() {
-    var chooseTime = this.data.reserveddateData.choose_year + '-' + this.data.reserveddateData.choose_month + '-' + this.data.reserveddateData.choose_day;
-    chooseTime = moment(chooseTime).format('YYYY-MM-DD');
+  //   this.setData({
+  //     'reserveddateData.picker_value': [idx_year, idx_month, idx_day],
+  //     'reserveddateData.picker_year': picker_year,
+  //     'reserveddateData.picker_month': picker_month,
+  //     'reserveddateData.picker_day': picker_day
+  //   });
+  // },
+  // bindSaveChooseTime() {
+  //   var chooseTime = this.data.reserveddateData.choose_year + '-' + this.data.reserveddateData.choose_month + '-' + this.data.reserveddateData.choose_day;
+  //   chooseTime = moment(chooseTime).format('YYYY-MM-DD');
 
-    if (moment(chooseTime).isBefore()) {
-      wx.showModal({
-        title: '提示',
-        content: '不能选择今天以前的日期！',
-        showCancel: false
-      })
-    } else {
-      // 预订时间 联系人 存储本地
-      this.saveLocalChooseTime(chooseTime);
-      this.saveLocalContacts(this.data.contacts);
+  //   if (moment(chooseTime).isBefore()) {
+  //     wx.showModal({
+  //       title: '提示',
+  //       content: '不能选择今天以前的日期！',
+  //       showCancel: false
+  //     })
+  //   } else {
+  //     // 预订时间 联系人 存储本地
+  //     this.saveLocalChooseTime(chooseTime);
+  //     this.saveLocalContacts(this.data.contacts);
 
-      this.setData({
-        'reserveddateData.dateViewHidden': true
-      })
-    }
-  },
-  bindCancelBtnTap(e) {
-    if (e.currentTarget.dataset.type == 'table') {
-    } else {
-      this.setData({
-        'reserveddateData.dateViewHidden': true
-      })
-    }
-  },
-  bindConfirmBtnTap(e) {
-    if (e.currentTarget.dataset.type == 'table') {
-    } else {
-      // 检查是否有选过 预订时间
-      this.bindSaveChooseTime();
-    }
-  },
-  bindContactInput(e) {
-    this.setData({
-      'contacts.contact': e.detail.value
-    })
-  },
-  bindContactInfoInput(e) {
-    this.setData({
-      'contacts.contactInformation': e.detail.value
-    })
-  },
-  bindGenderCheckboxChange(e) {
-    this.setData({
-      'contacts.gender': e.detail.value
-    })
-  },
+  //     this.setData({
+  //       'reserveddateData.dateViewHidden': true
+  //     })
+  //   }
+  // },
+  // bindCancelBtnTap(e) {
+  //   if (e.currentTarget.dataset.type == 'table') {
+  //   } else {
+  //     this.setData({
+  //       'reserveddateData.dateViewHidden': true
+  //     })
+  //   }
+  // },
+  // bindConfirmBtnTap(e) {
+  //   if (e.currentTarget.dataset.type == 'table') {
+  //   } else {
+  //     // 检查是否有选过 预订时间
+  //     this.bindSaveChooseTime();
+  //   }
+  // },
+  // bindContactInput(e) {
+  //   this.setData({
+  //     'contacts.contact': e.detail.value
+  //   })
+  // },
+  // bindContactInfoInput(e) {
+  //   this.setData({
+  //     'contacts.contactInformation': e.detail.value
+  //   })
+  // },
+  // bindGenderCheckboxChange(e) {
+  //   this.setData({
+  //     'contacts.gender': e.detail.value
+  //   })
+  // },
 
-  saveLocalChooseTime(chooseTime) {
-    wx.setStorage({
-      key: "reservedDate",
-      data: chooseTime
-    })
-    this.setData({
-      reservedDate: chooseTime
-    })
-    console.log('saveLocalChooseTime = ' + chooseTime)
-    //    contactsInfoStore.save('reservedDate', chooseTime);
-  },
-  saveLocalContacts(contacts) {
-    wx.setStorage({
-      key: "contacts",
-      data: contacts
-    })
-    this.setData({
-      contacts: contacts
-    })
-    console.log('saveLocalContacts = ' + JSON.stringify(contacts))
-    //    contactsInfoStore.save('contacts', contacts);
-  },
+  // saveLocalChooseTime(chooseTime) {
+  //   wx.setStorage({
+  //     key: "reservedDate",
+  //     data: chooseTime
+  //   })
+  //   this.setData({
+  //     reservedDate: chooseTime
+  //   })
+  //   console.log('saveLocalChooseTime = ' + chooseTime)
+  // },
+  // saveLocalContacts(contacts) {
+  //   wx.setStorage({
+  //     key: "contacts",
+  //     data: contacts
+  //   })
+  //   this.setData({
+  //     contacts: contacts
+  //   })
+  //   console.log('saveLocalContacts = ' + JSON.stringify(contacts))
+  // },
 
 })

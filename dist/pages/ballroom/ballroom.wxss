@@ -36,6 +36,8 @@ page {
 .foot-view {
   color: white;
   font-size: 28rpx;
+  text-align: center;
+  width: 100%;
 }
 
 .comment-view {
@@ -50,9 +52,9 @@ page {
   border: 1px white solid;
   border-radius: 7px;
   margin: 0 20rpx;
-  padding: 0 12rpx;
-  height: 50rpx;
-  line-height: 50rpx;
+  padding: 0 20rpx;
+  height: 60rpx;
+  line-height: 60rpx;
 }
 
 /* 桌数 */

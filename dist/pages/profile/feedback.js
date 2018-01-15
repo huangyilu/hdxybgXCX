@@ -21,16 +21,11 @@ Page({
     var me = this;
     wx.getSystemInfo({
       success: function (res) {
-
         me.setData({
           windowWidth: res.windowWidth
         })
-
       }
     })
-
-    // uploadFeedback
-
   },
 
   bindTextInput (e) {
@@ -51,7 +46,7 @@ Page({
       wx.showToast({
         title: '发表成功!',
         icon: 'success',
-        duration: 2000,
+        duration: 4000,
         success: function (res) {
           wx.navigateBack({
             delta: 1

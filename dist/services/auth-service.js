@@ -125,6 +125,7 @@ export function authFromServer(authCode, userInfoResult) {
       method: 'GET',
       data: {
         "code": authCode,
+        "hotelId": +appConfig.hotelId
       },
       header: {
         'content-type': 'application/json'
@@ -182,3 +183,5 @@ export function ensureLoggedIn() {
     });
   });
 }
+
+// code 0016FrSw0fuhgi1ie2Sw0qAcSw06FrS0

@@ -1,5 +1,7 @@
 /* pages/profile/historyOrder.wxss */
 
+@import '../../templates/myorder-item/myorder-item.wxss';
+
 /* 订单头部 */
 .title {
     padding: 10rpx 20rpx;

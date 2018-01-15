@@ -259,22 +259,36 @@ const conf = {
       console.log('联系人' + this.data.contactsName);
       console.log('联系人电话' + this.data.contactPhone);
 
-    HotelDataService.uploadAppointmentDate(this.data.newDays, this.data.hallId, this.data.contactsName, this.data.contactPhone).then((result) => {
-        console.log("uploadAppointmentDate success = " + JSON.stringify(result));
-
-        wx.showToast({
-          title: '预约成功！',
-          icon: 'success',
-          duration: 2000
-        })
-
-    }).catch((error) => {
-      console.log(error);
-    })
+      if (this.data.newDays == '') {
+        this.showModalContent('请选择预订日期！');
+      }
+      else if (this.data.contactsName == '') {
+        this.showModalContent('请填写联系人！');
+      }
+      else if (this.data.contactPhone == '') {
+        this.showModalContent('请填写联系电话！');
+      } else {
+        this.uploadAppointment();
+      }
 
     }
 
   },
+
+  uploadAppointment () {
+    HotelDataService.uploadAppointmentDate(this.data.newDays, this.data.hallId, this.data.contactsName, this.data.contactPhone).then((result) => {
+      console.log("uploadAppointmentDate success = " + JSON.stringify(result));
+
+      wx.showToast({
+        title: '预约成功！',
+        icon: 'success',
+        duration: 2000
+      })
+
+    }).catch((error) => {
+      console.log(error);
+    })
+  }
 };
 
 Page(conf);

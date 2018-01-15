@@ -1,5 +1,9 @@
 <!--pages/weddingTalent/weddingTalent.wxml-->
 
+<import src="../../templates/dishes-item/dishes-item.wxml"/>
+<import src="../../templates/talent-item/talent-item.wxml"/>
+<import src="../../templates/celebration-item/celebration-item.wxml"/>
+
  <view class="weui-tab">
   <view class="weui-navbar">
       <block wx:for-items="{{ navbarTabs }}" wx:key="{{ index }}">
@@ -9,81 +13,45 @@
       </block>
       <!-- <view class="weui-navbar__slider" style="left: {{ sliderLeft }}px; transform: translateX({{ sliderOffset }}px); -webkit-transform: translateX({{ sliderOffset }}px);"></view> -->
   </view>
+
   <view class="weui-tab__panel">
-    <view class="weui-tab__content" hidden="{{ activeIndex != 0 }}">
-      <!-- 选项一的内容 -->
-      <!-- 左边 -->
-      <view class='leftTabs'>
-        <!-- <scroll-view scroll-y style="height: {{ windowHeight }}px;"> -->
-          <block wx:for="{{ leftTabs }}" wx:for-item="tab" wx:key="{{ index }}">
-            <view id='{{ index }}' class="left-item {{ itemSelectIndex == index ? 'left-item-select' : '' }}" bindtap='bindLeftTabsTap'>
-              <view class="left-item-btn-select {{ itemSelectIndex == index ? '' : 'none' }}">
-                <text class='select-txt'>{{ tab }}</text>
-                <image class='select-icon' src='{{ itemSelectIndex == index ? "../../images/select-icon.png" : "" }}'></image>
-              </view>
-            </view>
-          </block>
-        <!-- </scroll-view> -->
-      </view>
 
-      <!-- 右边 -->
-      <view class='rightScroll'>
-        <scroll-view scroll-y style="height: {{ windowHeight }}px;" scroll-with-animation="true" >
-          <block wx:for="{{ talentList }}" wx:for-item="talent" wx:key="{{ talent.talentid }}">
-            <view class="right-item" >
-              <view style='display:inline-block;' data-talentid='{{ talent.talentid }}' bindtap='goTalentDetailsPage'>
-                <view class='avatar' >
-                  <image src='{{ talent.imgUrl }}'></image>
-                </view>
-                <view class='info'>
-                  <view>{{ talent.name }}</view>
-                  <view class='praise lit-text'>{{ talent.praise }}</view>
-                  <view class='transaction lit-text'>{{ talent.transaction }}</view>
-                </view>
-              </view>
-              <view class='price'>
-                <text>¥ {{ talent.price }}</text>
-                <view wx:if='{{ talent.freeStatus == true }}' data-talenttypeid='{{ itemSelectIndex }}' data-talentid='{{ talent.talentid }}' id='{{ index }}' data-talentinfo='{{ talent }}' class='{{ talent.selected ? "selectBtn" : "selectedBtn" }}' bindtap='bindTalentSelectTap'>{{ talent.selected ? "已选用" : "选用" }}</view>
-                <view wx:if='{{ talent.freeStatus == false }}' class='notOptional-btn' >选用</view>
-              </view>
-            </view>
-          </block>
-        </scroll-view>
-      </view>
-      
-      <!-- 上划查看更多 -->
-      <view class='foot-more-view'>上划查看更多</view>
-
-    </view>
-<!-- 选项一结束 -->
-    <view class="weui-tab__content" hidden="{{ activeIndex != 1 }}" style='border-top-style:none;padding-top:20rpx;'>
-      <!-- 选项二的内容 -->
-      <block wx:for="{{ disheList }}" wx:for-item="dishe" wx:key="{{ index }}" >
-      <view class='dishe-panel' style='{{ index%2 == 0 ? "float:left;" : "float:right;" }}' >
-        <image class='dishe-img' mode='aspectFill' id='{{ dishe.disId }}' src='{{ dishe.imgUrl }}' bindtap='goDishesDetailsPage'></image>
-        <view class='name' id='{{ dishe.disId }}' bindtap='goDishesDetailsPage'>
-          <text>{{ dishe.name }}</text>
-          <text class='price'>¥ {{ dishe.price }}</text>
-        </view>
-        <view class='next-icon' id='{{ dishe.disId }}' bindtap='goDishesDetailsPage'>
-          <text>菜单</text>
-          <image class='right-icon' src='../../images/arrow-right.png'></image>
-        </view>
-        <view style='text-align: center;'>
-          <view id='{{ index }}' class='{{ dishe.selected ? "selectBtn" : "selectedBtn" }}' data-disheinfo='{{ dishe }}' bindtap='bindDishesSelectTap'>{{ dishe.selected ? "已选用" : "选用" }}</view>
-        </view>
-      </view>
-      </block>
-      <!-- 上划查看更多 -->
-      <view class='foot-more-view'>
+<!-- 选项一 开始 -->
+    <view class="weui-tab__content" hidden="{{ activeIndex != 0 }}" style='border-top-style:none;padding-top:20rpx;'>
+      <!-- 选项一 内容 -->
+      <template is="dishes-item" data="{{ disheList }}"/>
+      <!--无 更多 -->
+      <view class='foot-more-view' wx:if='{{ disheList.length <= 0 }}'>
         <view class="second-txt-color">暂无更多套餐</view>
       </view>
+    </view>
+<!-- 选项一 结束 -->
 
+<!-- 选项二 开始 -->
+    <view class="weui-tab__content" hidden="{{ activeIndex != 1 }}">
+      <!-- 选项二 内容 -->
+      <template is="talent-item" data="{{ leftTabs,talentList,windowHeight,itemSelectIndex }}"/>
+      <!-- 无 更多 -->
+      <view class='foot-more-view' wx:if='{{ talentList.length <= 0 }}'>
+        <view class="second-txt-color">暂无更多人才</view>
+      </view>
     </view>
 <!-- 选项二结束 -->
+
+<!-- 选项三 开始 -->
+    <view class="weui-tab__content" hidden="{{ activeIndex != 2 }}" style='border-top-style:none;padding-top:20rpx;'>
+      <!-- 选项三 内容 -->
+      <template is="celebration-item" data="{{ celebrationList }}"/>
+      <!-- 无 更多 -->
+      <view class='foot-more-view' wx:if='{{ celebrationList.length <= 0 }}'>
+        <view class="second-txt-color">暂无更多庆典</view>
+      </view>
+    </view>
+<!-- 选项三 结束 -->
+
   </view>
 
-  <!-- 结算 -->
+<!-- 结算 -->
   <view class='weui-footer weui-footer_fixed-bottom settlement-view'>
     <text>共计：{{ shoppingcars.shoppinglist.length }}件</text>
     <view class='shopping-car-view' bindtap='goShoppingCarPage'>

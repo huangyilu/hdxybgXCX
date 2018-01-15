@@ -29,6 +29,9 @@ export isArray from 'lodash-es/isArray'
 export fill from 'lodash-es/fill'
 export pullAt from 'lodash-es/pullAt'
 
-// export filter from 'lodash-es/filter'
+export groupBy from 'lodash-es/groupBy'
+
+export filter from 'lodash-es/filter'
+
 // export uniqBy from 'lodash-es/uniqBy'
 // export isPlainObject from 'lodash-es/isPlainObject'

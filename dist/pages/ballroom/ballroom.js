@@ -5,7 +5,10 @@ import * as HotelDataService from '../../services/hotel-service';
 import shoppingCarStore from '../../services/shopping-car-store';
 import contactsInfoStore from '../../services/contacts-info-store';
 import moment from '../../utils/npm/moment';
+import { Base64 } from '../../utils/urlsafe-base64';
 
+import { remove } from '../../utils/npm/lodash-wx';
+ 
 Page({
 
   /**
@@ -69,7 +72,7 @@ Page({
 
     
 
-    console.log('reserveddateData.choose_day .. ' + this.data.reserveddateData.choose_day);
+    console.log('reserveddateData.choose_day .. ' + this.data.reserveddateData.choose_month);
 
     this.getBallroomDetails(options.ballroomid);
 
@@ -77,7 +80,7 @@ Page({
     this.setThisMonthPicArr();
 
     // 查看购物车
-    this.checkShoppingCar();
+    this.getShoppingCarData();
 
 
   },
@@ -112,21 +115,29 @@ Page({
 //    console.log('reserveddate = ' + value);
       
     if (value) {
-        wx.navigateTo({
-          url: '../weddingTalent/weddingTalent?reservedDate=' + value
-        })
+      wx.navigateTo({
+        url: '../weddingTalent/weddingTalent?reservedDate=' + value
+      })
     } else {
-        // 弹窗选择日期
-        this.setData({
-          'reserveddateData.dateViewHidden': false
-        })
+      // 弹窗选择日期
+      this.setData({
+        'reserveddateData.dateViewHidden': false
+      })
     }
 
   },
   goScheduleQueryPage (e) {
-    wx.navigateTo({
-      url: '../calculate/scheduleQuery?hallid=' + this.data.ballroomid
-    })
+
+    // 判断 购物车是否已有宴会厅 询问是否 替换宴会厅
+    if (this.checkShoppingCar()) {
+      // 替换宴会厅 并进入下一页
+      // 宴会厅 加入购物车
+      // this.joinShoppingCar();
+
+    } else {
+      console.log('sssssss');
+    }
+
   },
   goAppointmentSitePage () {
     wx.navigateTo({
@@ -135,7 +146,7 @@ Page({
   },
   goCommentPage () {
     wx.navigateTo({
-      url: '../ballroom/ballCommentList?hallid=' + this.data.ballroomid
+      url: '../comment/commentListView?hallid=' + this.data.ballroomid + '&prePageType=ballroom'
     })
   },
 
@@ -143,9 +154,9 @@ Page({
   pickerChange(e) {
     const val = e.detail.value;
 
-    var choose_year = this.data.reserveddateData.picker_year[val[0]],
-      choose_month = this.data.reserveddateData.picker_month[val[1]],
-      choose_day = this.data.reserveddateData.picker_day[val[2]];
+    var choose_year = this.data.reserveddateData.picker_year[val[0]] ? this.data.reserveddateData.picker_year[val[0]] : this.data.reserveddateData.choose_year,
+      choose_month = this.data.reserveddateData.picker_month[val[1]] ? this.data.reserveddateData.picker_month[val[1]] : this.data.reserveddateData.choose_month,
+      choose_day = this.data.reserveddateData.picker_day[val[2]] ? this.data.reserveddateData.picker_day[val[2]] : this.data.reserveddateData.choose_day;
 
     var dateString = choose_year + '-' + choose_month + '-' + choose_day;
     // 检测 日期 是否可预订
@@ -223,7 +234,7 @@ Page({
       this.saveLocalChooseTime(chooseTime);
       this.saveLocalContacts(this.data.contacts);
       // 加入购物车
-      this.joinShoppingCar();
+      // this.joinShoppingCar();
       this.setData({
         'reserveddateData.dateViewHidden': true
       })
@@ -234,7 +245,57 @@ Page({
     }
   },
   
-  checkShoppingCar () {
+  checkShoppingCar() {
+    var shoppingcar = this.data.shoppingcar;
+    var isBallroom = false;
+    var me = this;
+    shoppingcar.forEach(item => {
+      if (item.title == '宴会厅') {
+        isBallroom = true;
+      }
+    })
+
+    if (isBallroom) {
+
+      wx.showModal({
+        title: '您已选有宴会厅！',
+        content: '是否替换已有宴会厅？',
+        success: function (res) {
+          if (res.confirm) {
+            console.log('用户点击确定')
+            // 删除 购物车的 宴会厅
+            remove(shoppingcar, function (n) {
+              return n.title == '宴会厅';
+            });
+
+            me.setData({
+              shoppingcar: shoppingcar
+            })
+            // 加入新的 宴会厅
+            // me.joinShoppingCar();
+            shoppingCarStore.save('shoppingcar', shoppingcar);
+
+            wx.navigateTo({
+              url: '../calculate/reservationInformation?hallid=' + me.data.ballroomid + '&balldetails=' + Base64.encodeURI(JSON.stringify(me.data.balldetails)) + '&ballinfo=' + Base64.encodeURI(JSON.stringify(me.data.ballInfo))
+            })
+          } else if (res.cancel) {
+            console.log('用户点击取消')
+          }
+        }
+      })
+
+
+    } else {
+      // 加入 宴会厅
+      // this.joinShoppingCar();
+      wx.navigateTo({
+        url: '../calculate/reservationInformation?hallid=' + this.data.ballroomid + '&balldetails=' + Base64.encodeURI(JSON.stringify(this.data.balldetails)) + '&ballinfo=' + Base64.encodeURI(JSON.stringify(this.data.ballInfo))
+      })
+    }
+
+
+  },
+  getShoppingCarData () {
     shoppingCarStore.get('shoppingcar').then(result => {
 
       console.log('shoppingcar...' + JSON.stringify(result));
@@ -252,6 +313,43 @@ Page({
     newShoppingcar.push(balldetails);
     shoppingCarStore.save('shoppingcar', newShoppingcar);
   },
+  // 过滤购物车
+  formatShoppingCar(talentinfo, talenttype) {
+
+    var shoppingcar = this.data.shoppingcar;
+    var talenttypes = shoppingcars.talenttypes;
+    var shoppinglist = shoppingcars.shoppinglist;
+    shoppingcars.shoppingtime = moment().format('YYYY-MM-DD');
+
+    // 如果已经有这个类别了，购物车就不再+1，且替换原来已有的人
+    if (talenttypes.length > 0) {
+
+      for (var i = 0; i < talenttypes.length; i++) {
+        var types = talenttypes[i];
+        if (types != talenttype) {
+          talenttypes.push(talenttype);
+          shoppinglist.push(talentinfo);
+          break;
+        } else {
+          // 替换已有类别的人
+          var tylength = talenttypes.length - 1;
+          shoppinglist[tylength] = talentinfo;
+          break;
+        }
+      }
+
+    } else {
+      talenttypes.push(talenttype);
+      shoppinglist.push(talentinfo);
+    }
+
+    this.setData({
+      shoppingcars: shoppingcars
+    })
+
+    console.log('替换 宴会厅 后最终购物车：' + JSON.stringify(shoppinglist));
+  },
+
   saveLocalChooseTime (chooseTime) {
     wx.setStorage({
       key: "reservedDate",
@@ -284,11 +382,6 @@ Page({
       'contacts.gender': e.detail.value
     })
   },
-  bindTablesChooseTap () {
-    this.setData({
-      tableHidden: false
-    })
-  },
   bindTableSliderChange (e) {
     this.setData({
       'ballInfo.tabNumsText': e.detail.value
@@ -308,31 +401,10 @@ Page({
     }
   },
   bindConfirmBtnTap (e) {
-    // if (e.currentTarget.dataset.type == 'table') {
-      // 检查是否选过桌数 保存桌数
-      // this.bindSaveTableNum();
-
-    // } else {
-
-      if (!this.data.reserveddateData.reserved) {
-        // 检查是否有选过 预订时间
-        this.bindSaveChooseTime();
-      }
-
-    // }
-  },
-  bindSaveTableNum () {
-    var value = wx.getStorageSync('ballTablenNum');
-    if (value) {
-      this.setData({
-        'ballInfo.tabNumsText': value
-      })
-    } else {
-      wx.setStorageSync('ballTablenNum', this.data.ballInfo.tabNumsText);
+    if (!this.data.reserveddateData.reserved) {
+      // 检查是否有选过 预订时间
+      this.bindSaveChooseTime();
     }
-    this.setData({
-      tableHidden: true
-    })
   }
 
 })

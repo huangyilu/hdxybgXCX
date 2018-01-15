@@ -3,6 +3,7 @@
 import * as hoteldata from '../../utils/hoteldata-format';
 import * as HotelDataService from '../../services/hotel-service';
 import * as AuthService from '../../services/auth-service';
+import { flattenDeep } from '../../utils/npm/lodash-wx';
 
 // var amapFile = require('../../libs/amap-wx.js');
 // var amapKey = '2a397d94c316bfaa79acf7397bcc4dbb';
@@ -27,7 +28,10 @@ const pageOptions = {
     weddingmenuNum: 0,
 
     // 宴会庆典
-    banquet: []
+    banquet: [],
+
+    // 婚礼人才
+    talents: []
   },
   //事件处理函数
   onLoad: function () {
@@ -37,6 +41,8 @@ const pageOptions = {
     // 取数据
     this.getHotelData();
 
+    
+
   },
 
   //下拉刷新
@@ -45,10 +51,11 @@ const pageOptions = {
 
     // 取数据
     this.getHotelData();
-
+    
+    wx.startPullDownRefresh()
   },
 
-// 页面跳转
+  //页面跳转
   goBallroomPage (e) {
     var id = e.currentTarget.dataset.ballroomid;
     wx.navigateTo({
@@ -57,32 +64,36 @@ const pageOptions = {
   },
   goCelebrationDetailsPage (e) {
     wx.navigateTo({
-      url: '../celebrationDetails/celebrationDetails?celebrationid=' + e.currentTarget.id
-    })
-  },
-  goWeddingTalentPage() {
-    wx.navigateTo({
-      url: '../weddingTalent/weddingTalent?type=dishes'
+      url: '../celebration/celebrationDetails?celebrationid=' + e.currentTarget.id + '&prepagetype=home'
     })
   },
   goDishesDetailsPage (e) {
     wx.navigateTo({
-      url: '../dishesDetails/dishesDetails?dishesid=' + e.currentTarget.id,
+      url: '../dishes/dishesDetails?dishesid=' + e.currentTarget.id + '&prepagetype=home',
     })
   },
   goCelebrationListPage () {
     wx.navigateTo({
-      url: '../celebrationDetails/celebrationList',
+      url: '../celebration/celebrationList?prepagetype=home',
     })
   },
-  // 点击事件
-  bindBallroomTap: function () {
-
+  goTalentDetailsPage (e) {
     wx.navigateTo({
-      url: '../ballroom/allBallroomList',
+      url: '../talents/talentDetails?talentid=' + e.currentTarget.id + '&prepagetype=home',
     })
-
   },
+  goTalentListPage () {
+    wx.navigateTo({
+      url: '../talents/talentListView?prepagetype=home',
+    })
+  },
+  goBallroomListViewPage () {
+    wx.navigateTo({
+      url: '../ballroom/ballroomListView?prepagetype=home',
+    })
+  },
+
+  // 点击事件
   bindLocationTap: function () {
 
     //初始化 腾讯地图提供地理编码，拿到经纬度后打开 微信内置地图
@@ -133,22 +144,25 @@ const pageOptions = {
     var me = this;
     HotelDataService.queryHotelHome().then((result) => {
       // console.log("success = " + JSON.stringify(result.hotel));
-      console.log("gethoteldata success...");
+      // console.log("gethoteldata success...");
 
       var hotelInfo = hoteldata.formatHotelInfo(result.hotel);
-      // var weddingmenu = hoteldata.formatWeddingmenu(result.comboList);
+      // wx.setNavigationBarTitle({
+      //   title: hotelInfo.hotelName,
+      // })
 
-      // var bans = hoteldata.formatBanquet(result.celebrationList);
+      console.log("gethoteldata success..." + JSON.stringify(hotelInfo));
 
       me.setData({
         bodyHidden: false,
         hotelInfo: hotelInfo,
         score: hoteldata.getScoreStart(hotelInfo.hotelScore),
-        ballrooms: hoteldata.formatBallrooms(result.banquetHallList),
-        ballroomsNum: result.banquetHallList.length,
-        weddingmenu: hoteldata.formatWeddingmenu(result.comboList),
-        weddingmenuNum: result.comboList.length,
-        banquet: hoteldata.formatBanquet(result.celebrationList),
+        ballrooms: result.banquetHallList ? hoteldata.getTheTopN(hoteldata.formatBallrooms(result.banquetHallList), 2) : [],
+        ballroomsNum: result.banquetHallList ? result.banquetHallList.length : [],
+        weddingmenu: result.comboList ? hoteldata.formatWeddingmenu(result.comboList) : [],
+        weddingmenuNum: result.comboList ? result.comboList.length : 0,
+        banquet: result.celebrationList ? hoteldata.formatBanquet(result.celebrationList) : [],
+        talents: result.talentList ? flattenDeep(hoteldata.formatHomeTalent(result.talentList)) : []
       })
 
       // 保存 预付定金比例

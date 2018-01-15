@@ -1,6 +1,6 @@
 
 import moment from './npm/moment';
-import { flattenDeep } from './npm/lodash-wx'
+import { flattenDeep, groupBy } from './npm/lodash-wx';
 import * as appConfig from '../app-config';
 
 // 酒店基本信息
@@ -12,7 +12,8 @@ export function formatHotelInfo(info) {
     hotelLocation: info.address,
     hotelDescription: info.descreption,
     hotelPhonecall: info.tel,
-    hotelBgimg: info.img
+    hotelBgimg: info.img.split(','),
+    hotelGoodReputation: info.goodReputation + '%'
   }
 }
 
@@ -22,9 +23,8 @@ export function formatBallrooms(list) {
 }
 export function formatBallroomsItem(item) {
   return {
-    // imgUrl: item.img,
     ballroomId: item.banquetHallId,
-    imgUrl: item.img,
+    imgUrl: item.image,
     name: item.name,
     level: item.floorNum,
     tabNums: item.minTable + '~' + item.maxTable,
@@ -44,24 +44,40 @@ export function fomatBallroomInfo (item) {
     highLevel: item.floorHeight + 'm',
     area: item.area + '㎡',
     imgUrl: item.img,
-    imgUrls: this.getBallroomImgs(item.img)
+    imgUrls: item.img.split(',')
   }
 }
-export function getBallroomImgs(img){
-  var newList = [];
-  newList.push(img)
-  return newList;
-}
 // 宴会厅 等 评论列表
-export function formaHotelCommentList(list) {
-  return list.map(item => this.formatHotelCommentListItem(item))
+// export function formatHotelCommentList(list) {
+//   return list.map(item => this.formatHotelCommentListItem(item))
+// }
+// export function formatHotelCommentListItem(item) {
+//   return {
+//     avatar: item.headimg ? item.headimg : '../../images/menu_personal_inactive.png',
+//     name: item.nickName ? item.nickName : '某某',
+//     desc: item.commentContent ? item.commentContent : '好！',
+//     score: item.compLevel ? this.getScoreStart(item.compLevel) : this.getScoreStart(5)
+//   }
+// }
+
+// 首页婚礼人才
+export function formatHomeTalent (list) {
+  return list.map(item => this.formatHomeTalentItem(item))
 }
-export function formatHotelCommentListItem(item) {
+export function formatHomeTalentItem (item) {
+  return item.talentList.length >= 2 ? this.formatHomeTalentList(this.getTheTopN(item.talentList, 2)) : this.formatHomeTalentList(item.talentList)
+}
+export function formatHomeTalentList (list) {
+  return list.map(item => this.formatHomeTalentListItem(item))
+}
+export function formatHomeTalentListItem (item) {
   return {
-    avatar: item.headimg ? item.headimg : null,
-    name: item.nickName ? item.nickName : null,
-    desc: item.commentContent ? item.commentContent : null,
-    score: item.compLevel ? this.getScoreStart(item.compLevel) : null
+    talentid: item.weddingTalentId,
+    name: item.name,
+    occupation: item.occupation,
+    headImg: item.headImg,
+    goodReputation: item.goodReputation + '%',
+    experience: item.chosenCount
   }
 }
 
@@ -83,8 +99,8 @@ export function formatWeddingTalentItem (item, talentname) {
     talentid: item.weddingTalentId,
     imgUrl: item.headImg,
     name: item.name,
-    praise: item.experience + '%好评',
-    transaction: item.goodReputation ? '交易:' + item.goodReputation + '次' : '交易:0次',
+    praise: item.goodReputation + '%好评',
+    transaction: item.chosenCount ? '交易:' + item.chosenCount + '次' : '交易:0次',
     price: item.price,
     selected: false,
     freeStatus: item.freeStatus
@@ -105,21 +121,32 @@ export function formatTalentDetails(result) {
     mypics: result.pictureList.length > 0 ? this.getTheTopN(result.pictureList, 3) : [],
     myvideos: result.mediaList.length > 0 ? this.getTheTopN(result.mediaList, 3) : [],
     introduce: result.talent.introduction,
-    freeStatus: result.talent.freeStatus
+    freeStatus: result.talent.freeStatus,
+    perDesc: result.talent.personalDeclaration ? result.talent.personalDeclaration : '婚礼人的一天',
+    perTimer: moment().format('YYYY-MM'),
+    reservedList: this.formatReservedList(result.tReservedList)
   }
 }
+// 人才详情 已被占用时间
+export function formatReservedList(list) {
+  return list.map(item => this.formatReservedItem(item));
+}
+export function formatReservedItem(item) {
+  return item.startTimeString + '-' + item.endTimeString
+}
+
 // 人才 详情评论
-export function formatTalentDetailComment (list) {
-  return list.map(comt => this.formatTalentDetailCommentItem(comt));
-}
-export function formatTalentDetailCommentItem (item) {
-  return {
-    avatar: item.img,
-    name: item.nickName,
-    desc: item.commentContent,
-    score: this.getScoreStart(item.compLevel)
-  }
-}
+// export function formatTalentDetailComment (list) {
+//   return list.map(comt => this.formatTalentDetailCommentItem(comt));
+// }
+// export function formatTalentDetailCommentItem (item) {
+//   return {
+//     avatar: item.img,
+//     name: item.nickName,
+//     desc: item.commentContent,
+//     score: this.getScoreStart(item.compLevel)
+//   }
+// }
 // 人才 更多图片
 export function formatTalentMorePic (list) {
   return list.map(item => this.formatTalentMorePicItem(item));
@@ -212,7 +239,9 @@ export function formatTalentComparison (item) {
     },
     // 评论
     comment: {
-      coms: item.talentCommentList.length > 0 ? this.getTalentComment(item.talentCommentList) : ''
+      showAllComsHidden: false,
+      coms: item.talentCommentList.length > 0 ? this.getTheTopN(this.formatCommentList(item.talentCommentList), 3) : [],
+      allComs: item.talentCommentList.length > 0 ? this.formatCommentList(item.talentCommentList) : []
     }
   }
 }
@@ -243,17 +272,17 @@ export function getTalentShowing (imgs,videos) {
   return newArr;
 }
 // 人才对比 评论
-export function getTalentComment (list) {
-  return list.map(item => this.getTalentCommentItem(item))
-}
-export function getTalentCommentItem (item) {
-  return {
-    username: item.nickName,
-    avarUrl: item.headimg,
-    text: item.commentContent,
-    score: this.getScoreStart(item.compLevel)
-  }
-}
+// export function getTalentComment (list) {
+//   return list.map(item => this.getTalentCommentItem(item))
+// }
+// export function getTalentCommentItem (item) {
+//   return {
+//     username: item.nickName,
+//     avarUrl: item.headimg,
+//     text: item.commentContent ? item.commentContent : '好！',
+//     score: this.getScoreStart(item.compLevel)
+//   }
+// }
 
 // 菜品
 export function formatWeddingmenu(list) {
@@ -273,8 +302,17 @@ export function formatDishesDetails (item) {
   return {
     name: item.combo.name,
     price: item.combo.price,
-    dishesList: item.dishStyleList
+    dishesList: item.dishStyleGroupList
   }
+}
+export function formatDishesDetailsSwiper(dishesList){
+  var newList = [];
+  dishesList.map(dishes => {
+    dishes.list.map(item => {
+      newList.push(item);
+    })
+  })
+  return newList
 }
 
 //宴会庆典
@@ -298,8 +336,8 @@ export function formatCelebrationDetailsCheckbox (item) {
       checked: true,
       stage: true,
       notStage: false,
-      stagePrice: item.stagePrice,
-      value: item.preprice,
+      stagePrice: item.isShowPrice == '是' ? item.stagePrice : '价格面议',
+      value: item.isShowPrice == '是' ? item.preprice : '价格面议',
       stagevalue: 0
     },
     {
@@ -307,8 +345,8 @@ export function formatCelebrationDetailsCheckbox (item) {
       checked: false,
       stage: false,
       notStage: false,
-      stagePrice: item.stagePrice,
-      value: item.price,
+      stagePrice: item.isShowPrice == '是' ? item.stagePrice : '价格面议',
+      value: item.isShowPrice == '是' ? item.price : '价格面议',
       stagevalue: 0
     }
   ]
@@ -319,9 +357,9 @@ export function formatCelebrationDetails(item) {
     showImgs: item.images,
     styles: item.style,
     theme: item.theme,
-    basicPrice: item.preprice,
+    basicPrice: item.isShowPrice == '是' ? item.preprice : '价格面议',
     comboname: item.comboname,
-    luxuryPrice: item.price,
+    luxuryPrice: item.isShowPrice == '是' ? item.price : '价格面议',
     celeDesc: [
       {
         name: '迎宾区',
@@ -366,6 +404,30 @@ export function formatCeleDetailMorePicBrowse(list) {
   })
   return newList;
 }
+// 庆典 更多视频
+export function formatCeleDetatilMoreVideo (list) {
+  return list.map(item => this.formatCeleDetatilMoreVideoItem(item));
+}
+export function formatCeleDetatilMoreVideoItem (item) {
+  return {
+    time: item.dateString,
+    urls: item.celeMediaList
+  }
+}
+export function formatCeleMoreVideoBrowse(list) {
+  var newList = [];
+  list.forEach((datevideo, i) => {
+    datevideo.celeMediaList.forEach((pic, j) => {
+      var dic = {
+        id: (i + 1) * (j + 1),
+        url: pic.vediosrc,
+        time: datevideo.dateString
+      };
+      newList.push(dic);
+    })
+  })
+  return newList;
+}
 
 
 // 转化时间戳
@@ -374,10 +436,10 @@ export function formatTimestampToStr(timestamp) {
 }
 
 // 购物车
-export function formatShoppingcar(list) {
-  return list.map((item, i) => this.formatShoppingcarItem(item, i))
+export function formatShoppingcar(list, localTableNum) {
+  return list.map((item, i) => this.formatShoppingcarItem(item, i, localTableNum))
 }
-export function formatShoppingcarItem(item, i) {
+export function formatShoppingcarItem(item, i, localTableNum) {
   return {
     shopppingid: i,
     payid: item.content.typeid,
@@ -388,8 +450,8 @@ export function formatShoppingcarItem(item, i) {
     floorHeight: item.content.info.floorHeight ? '层高:' + item.content.info.floorHeight +'m' : '',
     tableNum: item.content.info.minTable ? item.content.info.minTable + '~' + item.content.info.maxTable + '桌' : '',
     price: item.content.packageStage ? this.getCelebrationPrice(item.content.packageStage) : (item.content.info.price ? item.content.info.price : 0),
-    nums: item.content.tableNum ? item.content.tableNum : 1,
-    finalTableNum: item.content.tableNum ? item.content.tableNum : null,
+    nums: item.content.tableNum ? localTableNum : 1,
+    finalTableNum: item.content.tableNum ? localTableNum : null,
     minTable: item.content.info.minTable ? item.content.info.minTable : null,
     maxTable: item.content.info.minTable ? item.content.info.maxTable : null,
     packageStage: item.content.packageStage ? item.content.packageStage : null,
@@ -398,6 +460,16 @@ export function formatShoppingcarItem(item, i) {
   }
     
 }
+export function formatShoppingcarInStore(list) {
+  return list.map(item => this.formatShoppingcarInStoreItem(item))
+}
+export function formatShoppingcarInStoreItem (item) {
+  return {
+    title: item.title,
+    content: item.content,
+    selected: true
+  }
+}
 
 // 计算 宴会庆典 套餐 价钱
 export function getCelebrationPrice(packageStage) {
@@ -405,18 +477,23 @@ export function getCelebrationPrice(packageStage) {
   if (packageStage.stage) {
     price = packageStage.packPrice + packageStage.stageprice
   }
+  if (packageStage.packPrice == '价格面议' || packageStage.stageprice == '价格面议') {
+    price = 0
+  }
   return price;
 }
 
 // 保存本地购物车 格式
-export function formatLocalShoppingcar(item, name, tableNum, packageStage) {
+export function formatLocalShoppingcar(item, name, tableNum, packageStage, startTime, endTime) {
   return {
     title: name,
     content: {
       typeid: this.getLocalShoppingId(name, item),
       info: item,
       tableNum: tableNum ? tableNum : null,
-      packageStage: packageStage ? packageStage : null
+      packageStage: packageStage ? packageStage : null,
+      startTime: startTime ? startTime : null,
+      endTime: endTime ? endTime : null
     },
     selected: true
   }
@@ -434,7 +511,7 @@ export function getLocalShoppingId(name, item) {
 }
 export function getLocalShoppingImgurl(name, item) {
   if (name == '宴会厅') {
-    return item.content.info.img;
+    return item.content.info.image;
   } else if (name == '婚礼人才') {
     return item.content.info.imgUrl;
   } else if (name == '菜品') {
@@ -465,14 +542,20 @@ export function formatuploadPrepay(list, reservedDate, customerName, tel, gender
     if (item.title == '宴会厅') {
       dic.hall = item.content.typeid;
     } else if (item.title == '婚礼人才') {
-      talentids.push(item.content.typeid);
+      talentids.push(item.content.typeid  + ';' + item.content.startTime + ';' + item.content.endTime);
       dic.talent = talentids.join(",");
-      console.log('talentid ... ' + dic.talent);
+
+      console.log('talentids ... ' + dic.talent);
     } else if (item.title == '菜品') {
       dic.combo = item.content.typeid;
       dic.hallTable = hallTable;
     } else if (item.title == '宴会庆典') {
       dic.celebration = item.content.typeid;
+
+      if (celePrice == '价格面议') {
+        celePrice = 0
+      }
+
       dic.celePrice = celePrice.toString();
       dic.comboStyle = comboStyle;
       dic.isStage = isStage;
@@ -493,7 +576,7 @@ export function formatMyorderAppointmentItem (item) {
     time: moment(item.reservedDate).format('YYYY-MM-DD'),
     reservationCode: item.vaidateCode,
     reservationCodeImg: item.twoBarCode,
-    prePrice: item.obligation,
+    prePrice: item.prePayPrice ? '¥ ' + item.prePayPrice : 0,
     countPrice: item.count,
     addInfo: '待付款',
     payList: this.formatAppList(item.hall, item.combo, item.celebration, item.talent)
@@ -528,14 +611,19 @@ export function formatAppList (hall, combo, celebration, talent) {
 }
 export function formatAppListItem(item, title, id) {
   return {
-    id: item.id ? item.id : null,
-    imgUrl: item.image ? item.image : (item.headImg ? item.headImg : item.img),
+    id: item.id ? item.id : id,
+    // imgUrl: item.image ? item.image : (item.headImg ? item.headImg : item.img),
+    imgUrl: item.imageAll.length > 0 ? item.imageAll[0] : '',
     title: item.occupation ? item.occupation : title,
     name: item.name,
     floor: item.floorNum ? item.floorNum : '',
     floorHeight: item.floorHeight ? '层高：' + item.floorHeight : '',
-    price: item.price ? item.price : 0,
-    nums: item.countTable ? item.countTable : 1
+    price: item.price ? '¥ ' + item.price : '¥ 0',
+    nums: item.countTable ? item.countTable : 1,
+    actualPrice: item.actualPrice == 0 ? '¥ 0 (价格面议)' : null,
+    packageStage: item.comboName ? item.comboName : null,
+    stage: item.stage == '是' ? true : false,
+    celeName: item.comboName ? item.name : ''
   }
 }
 
@@ -604,7 +692,7 @@ export function formatMyorderCommentsItem (item) {
     orderId: item.id,
     open: false,
     time: moment(item.reservedDate).format('YYYY-MM-DD'),
-    totalPrice: item.count,
+    totalPrice: item.count ? item.count : 0,
     addInfo: '待评价',
     titleImg: item.hall[0].img,
     titleName: item.hall[0].name,
@@ -612,6 +700,23 @@ export function formatMyorderCommentsItem (item) {
   }
 }
 
+// 我的 历史订单
+export function formatHistoryorder(list) {
+  return list.map(item => this.formatHistoryorderItem(item))
+}
+export function formatHistoryorderItem(item) {
+  return {
+    orderId: item.id,
+    open: false,
+    time: moment(item.reservedDate).format('YYYY-MM-DD'),
+    prePrice: item.prePayPrice ? item.prePayPrice : 0,
+    totalPrice: item.count,
+    addInfo: '历史订单',
+    titleImg: item.hall[0].img,
+    titleName: item.hall[0].name,
+    payList: this.formatAppList(item.hall, item.combo, item.celebration, item.talent)
+  }
+}
 
 // 我的消息
 export function formatMessageList (list) {
@@ -749,20 +854,18 @@ export function formatUploadCommentLevelString (list) {
   return +(newScore / list.length).toFixed(1);
 }
 
-// 历史订单
-export function formatHistoryorder(list) {
-  return list.map(item => this.formatHistoryorderItem(item))
+// 统一评论格式
+export function formatCommentList(list) {
+  return list.map(item => this.formatCommentListItem(item))
 }
-export function formatHistoryorderItem (item) {
+export function formatCommentListItem(item) {
   return {
-    payid: item.id,
-    date: moment(item.reservedDate).format('YYYY-MM-DD'),
-    totalPrice: item.count,
-    prePrice: item.obligation,
-    appointmentList: this.formatAppList(item.hall, item.combo, item.celebration, item.talent)
+    avatar: item.headimg ? item.headimg : '../../images/menu_personal_inactive.png',
+    name: item.nickName ? item.nickName : '某某',
+    desc: item.commentContent ? item.commentContent : '好！',
+    score: item.compLevel ? this.getScoreStart(item.compLevel) : this.getScoreStart(5)
   }
 }
-
 
 
 /*  -------------------- 小方法 ------------------------ */
@@ -773,7 +876,11 @@ export function getTheTopN(list, n) {
   for (var i = 0; i < n; i++) {
     newList.push(list[i]);
   }
-  return newList;
+  if (list.length >= n) {
+    return newList;
+  } else {
+    return list;
+  }
 }
 
 // 评分转换星星

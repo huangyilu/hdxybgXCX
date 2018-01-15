@@ -90,6 +90,12 @@ export function queryCelebrationDetailPics(celebrationId) {
     celebrationId: celebrationId
   })
 }
+// 庆典视频
+export function queryCelebrationDetailMedia(celebrationId) {
+  return jsonGetRequest('celebration/celebrationMedia', {
+    celebrationId: celebrationId
+  })
+}
 // 庆典评论
 export function queryCelebrationComment (celebrationId) {
   return jsonGetRequest('comment/getCeleCom', {
@@ -110,6 +116,16 @@ export function queryTalentDetails (talentId, reservedDate) {
     reservedDateString: reservedDate
   })
 }
+// 人才时间 检查
+export function queryTalentVerify(talentId, reservedDateString, startTimeString, endTimeString){
+  return jsonGetRequest('talent/pickTalentVerify' ,{
+    talentId: talentId,
+    reservedDateString: reservedDateString,
+    startTimeString: startTimeString,
+    endTimeString: endTimeString
+  })
+}
+
 // 人才对比 获取同类型人才
 export function queryTalentSameTypeList (talentId, reservedDate) {
   return jsonGetRequest('talent/compareTalentList', {

@@ -16,20 +16,20 @@
     margin-right: 30rpx;
 }
 /* 订单头部 */
+.title text {
+    font-size:28rpx;
+    margin-top:5rpx;
+}
 .history-cell .title {
     padding: 10rpx 20rpx;
     background-color: white;
     border-top: 1px #f1f1f1 solid;
     border-bottom: 1px #f1f1f1 solid;
-    font-size: 36rpx;
+    font-size: 30rpx;
     margin-top: 20rpx;
     height: 50rpx;
 }
-.history-cell .title .right-txt {
-    float: right;
-    font-size:28rpx;
-    margin-top:5rpx;
-}
+
 
 /* 订单cell */
 .payment-cell .cellImg {
@@ -87,6 +87,12 @@
   color: white;
   padding: 0 60rpx;
   margin-left: 20rpx;  
+}
+.not-settlement-btn {
+  background-color: #e5e5e5;
+  color: white;
+  padding: 0 60rpx;
+  margin-left: 20rpx;
 }
 .settlement-view .price {
   display: inline-block;

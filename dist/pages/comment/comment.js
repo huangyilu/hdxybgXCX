@@ -284,8 +284,11 @@ Page({
         icon: 'success',
         duration: 2000,
         success: function (res) {
-          wx.navigateBack({
-            delta: 1
+          // wx.navigateBack({
+          //   delta: 1
+          // })
+          wx.switchTab({
+            url: '../hotel/hotel',
           })
         }
       })

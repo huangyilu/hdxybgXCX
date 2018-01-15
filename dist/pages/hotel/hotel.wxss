@@ -43,26 +43,35 @@
 .header {
   background-color: white;
   width: 100%;
-  height: 300rpx;
+  height: 350rpx;
 }
 .header-img {
   width: 100%;
-  height: 300rpx;
+  height: 350rpx;
+}
+.imgSwiper {
+  height: 350rpx;
+  width: 100%;
 }
 .header-text {
   color: white;
-  height: 125rpx;
-  margin-top: -140rpx;
+  height: 135rpx;
+  /* margin-top: -140rpx; */
   padding: 0 2.5%;
   font-size: 18px;
   width: 95%;
   display: block;
   background-color: rgba(1,1,1,0.4);
   position: absolute;
+  top: 215rpx;
 }
 .header-text .text {
   color: #dddddd;
   font-size: 24rpx;
+  overflow:hidden;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
 }
 
 /* 描述 */
@@ -121,17 +130,18 @@
     margin-top: 20rpx;
     position: absolute;
     margin-left: 90%;
+    top: 0;
 }
 
 /* 菜品 横向滑动 */
 .scroll-view_H {
-  padding: 10rpx 2.5% 20rpx;
+  padding: 0rpx 2.5% 20rpx;
   width: 95%;
   height: 200rpx;
   background-color: white;
 }
 .scroll-h-title {
-  padding: 10rpx 20rpx 0;
+  padding: 20rpx;
   background-color:white;
   font-size: 30rpx;
 }
@@ -165,10 +175,11 @@
 
 /* 宴会庆典 横向滑动 */
 .celebration-scroll-view_H {
-  padding: 10rpx 2.5% 20rpx;
+  padding: 0rpx 2.5% 20rpx;
   width: 95%;
   height: 420rpx;  
   background-color: white;
+  white-space: nowrap;
 }
 .celebration-scroll-h-item {
   width: 300rpx;
@@ -190,17 +201,13 @@
   font-size: 26rpx;
 }
 .celebration-scroll-h-item .text-view .left-text {
-  float: left;
-  width: 170rpx;
-  height: 45rpx;
   overflow: hidden; 
   display:-webkit-box;
   -webkit-box-orient:vertical;
   -webkit-line-clamp:1;
 }
 .celebration-scroll-h-item .text-view .right-text {
-  float: right;
-  /* color: rgba(153,153,153,1); */
+  margin-left: 20rpx;
   font-size: 26rpx;
   color: #F15A4A;
 }
@@ -213,4 +220,54 @@
   padding: 6rpx 15rpx;
   font-size: 24rpx;
   border-radius: 30rpx;
+}
+
+/* 婚礼人才 */
+.hotel-talent-menu {
+  margin-bottom: 20rpx;
+}
+.talent-scroll-view_H {
+  padding: 0rpx 2.5% 20rpx;
+  width: 95%;
+  height: 400rpx;  
+  background-color: white;
+  white-space: nowrap;
+  border-bottom: 1px #DDDDDD solid;
+}
+.talent-scroll-h-item {
+  width: 300rpx;
+  height: 360rpx;  
+  margin-right: 20rpx;
+  display: inline-block;
+  background-color: white;
+  border: 1px #dddddd solid;
+  font-size: 26rpx;
+  padding: 10rpx;
+  text-align: center;
+}
+.talent-scroll-h-item .head-img {
+  margin-top: 20rpx;
+}
+.talent-scroll-h-item .head-img image{
+  width: 150rpx;
+  height: 150rpx;
+  margin: auto;
+  border-radius: 20rpx;
+  border: 1px #f5f5f5 solid;
+}
+.talent-scroll-h-item .btn-view {
+  color: white;
+  background-color: #D3AA6A;
+  border-radius: 15px;
+  height: 50rpx;
+  line-height: 50rpx;
+  width: 150rpx;
+  text-align: center;
+  font-size: 28rpx;
+  margin: 20rpx auto;
+}
+.talent-scroll-h-item .text-view text{
+  color: #999999;
+  font-size: 24rpx;
+  margin: 20rpx;
 }

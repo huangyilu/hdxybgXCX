@@ -97,9 +97,7 @@
   padding: 2.5%;
   border-bottom: 1px #f5f5f5 solid;
 }
-.price-cell-view text {
-  margin-left: 20rpx;
-}
+
 .price-cell-view .price-p {
   color: #F15A4A;
 }

@@ -18,7 +18,14 @@ export default {
     //     console.log('set');
     //     return wxStorageP.set(Category_Shopping_car, key, result)
     //   })
-    return wxStorageP.set(Category_Shopping_car, key, value)
+    return wxStorageP.set(Category_Shopping_car, key, value).then((result) => {
+      wx.showToast({
+        title: '操作成功',
+        icon: 'success',
+        duration: 2000
+      })
+      return reverse(result)
+    })
   },
 
   get(key) {

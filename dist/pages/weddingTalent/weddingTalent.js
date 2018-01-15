@@ -15,7 +15,7 @@ Page({
     windowHeight: '',
     navbarSliderHidden: false,
 
-    navbarTabs: ['婚礼人才','菜品'],
+    navbarTabs: ['菜品','婚礼人才','宴会庆典'],
     activeIndex: 0,
     sliderOffset: 0,
     sliderLeft: 0,
@@ -32,6 +32,9 @@ Page({
     // 菜品
     disheList: [],
     disheSelectedIndex: -1,
+
+    // 宴会庆典
+    celebrationList: [],
 
     // 结算
     totalPrice: '2333',
@@ -56,16 +59,8 @@ Page({
       reservedDate: options.reservedDate ? options.reservedDate : 0
     });
 
-    if (options.type == "dishes") {
-      this.setData({
-        activeIndex: 1
-      });
-      // 菜品 数据
-      this.getDishesList();
-    } else {
-      //婚礼人才 数据
-      this.getTalentList(options.reservedDate);
-    }
+    // 菜品 数据
+    this.getDishesList();
 
     this.getShoppingCarInStore();
     
@@ -107,6 +102,16 @@ Page({
       console.log(error);
     })
   },
+  getCelebrationList () {
+    HotelDataService.queryCelebrationList().then((result) => {
+      //庆典 数据
+      this.setData({
+        celebrationList: hoteldata.formatBanquet(result),
+      })
+    }).catch((error) => {
+      console.log(error);
+    })
+  },
   getShoppingCarInStore () {
     shoppingCarStore.get('shoppingcar').then(result => {
       this.setData({
@@ -121,20 +126,28 @@ Page({
   bindNavbarTabTap: function (e) {
     // console.log(e.currentTarget.offsetLeft);
 
-    if (e.currentTarget.id == 1) {
-      // 菜品 数据
-      if (this.data.disheList.length <= 0) { 
-        this.getDishesList();
-      }
-
-    } else {
-
-      if (this.data.talentList.length <= 0) {
-        //婚礼人才 数据
-        this.getTalentList(this.data.reservedDate);
-      }
-
+    switch (+e.currentTarget.id) 
+    {
+      case 0:
+        // 菜品 数据
+        if (this.data.disheList.length <= 0) {
+          this.getDishesList();
+        }
+      break;
+      case 1:
+        if (this.data.talentList.length <= 0) {
+          //婚礼人才 数据
+          this.getTalentList(this.data.reservedDate);
+        }
+      break;
+      case 2:
+        if (this.data.celebrationList.length <= 0) {
+          //宴会庆典 数据
+          this.getCelebrationList();
+        }
+      break;
     }
+
     this.setData({
       activeIndex: e.currentTarget.id,
     });
@@ -255,12 +268,17 @@ Page({
   // 跳转
   goTalentDetailsPage (e) {
     wx.navigateTo({
-      url: '../talentDetails/talentDetails?talentid=' + e.currentTarget.dataset.talentid,
+      url: '../talents/talentDetails?talentid=' + e.currentTarget.dataset.talentid,
     })
   },
   goDishesDetailsPage (e) {
     wx.navigateTo({
-      url: '../dishesDetails/dishesDetails?dishesid=' + e.currentTarget.id,
+      url: '../dishes/dishesDetails?dishesid=' + e.currentTarget.id,
+    })
+  },
+  goCelebrationDetailsPage(e) {
+    wx.navigateTo({
+      url: '../celebration/celebrationDetails?celebrationid=' + e.currentTarget.id
     })
   },
   goSettlementPage () {
@@ -270,7 +288,7 @@ Page({
   },
   goShoppingCarPage () {
     wx.navigateTo({
-      url: '../shoppingCar/shoppingCarIn',
+      url: '../shoppingCar/shoppingCarIn?prepagetype=wedtalt',
     })
   }
 })

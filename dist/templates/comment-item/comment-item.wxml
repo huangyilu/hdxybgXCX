@@ -1,7 +1,7 @@
 
 <template name="comment-item">
-  <!-- 评论 --> 
-<view class='weui-flex comment-item' wx:for="{{ comments }}" wx:for-item="cmts" wx:key="{{ index }}">
+<!-- 评论 --> 
+<view class='weui-flex comment-item' wx:for="{{ comments }}" wx:for-item="cmts" wx:key="{{ index }}" wx:if='{{ comments.length > 0 }}'>
   <view>
     <image class='avatar' src='{{ cmts.avatar }}'></image>
   </view>

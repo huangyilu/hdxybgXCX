@@ -23,11 +23,9 @@ Page({
   },
 
   bindMessageTap () {
-    
     wx.navigateTo({
-      url: '../message/message',
+      url: '../message/messageListView',
     })
-
   },
 
   // 跳转
