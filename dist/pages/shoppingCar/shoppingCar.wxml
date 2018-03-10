@@ -25,8 +25,7 @@
           <text style='{{ pay.floorHeight ? "margin-left:30rpx;" : "" }}'>{{ pay.floorHeight }}</text>
         </view>
         <view class='price'>
-          ¥ {{ pay.price }} 
-           {{ pay.packageStage.stageprice == '价格面议' ? ' (价格面议) ' : '' }} 
+          ¥ {{ pay.price == 0 ? ' 面议 ' : pay.price }} 
           <text class='second-txt-color' style='float:right;'>x{{ pay.nums }} {{ pay.finalTableNum ? '桌' : '' }}</text> 
           
           </view>

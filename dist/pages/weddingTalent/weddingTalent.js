@@ -14,8 +14,8 @@ Page({
   data: {
     windowHeight: '',
     navbarSliderHidden: false,
-
-    navbarTabs: ['菜品','婚礼人才','宴会庆典'],
+    navbarTabs: ['菜品', '婚礼人才'],
+    // navbarTabs: ['菜品','婚礼人才','宴会庆典'],
     activeIndex: 0,
     sliderOffset: 0,
     sliderLeft: 0,

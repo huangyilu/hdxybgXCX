@@ -76,7 +76,7 @@
   </view>
 
   <!-- 宴会庆典 -->
-  <view class='hotel-wedding-menu'>
+  <!-- <view class='hotel-wedding-menu'>
     <view class='scroll-h-title'>
       <text>宴会庆典</text>
     </view>
@@ -92,7 +92,7 @@
         </view>
       </view>
     </scroll-view>
-    </view>
+  </view> -->
 
   <!-- 婚礼人才 -->
   <view class='hotel-talent-menu'>

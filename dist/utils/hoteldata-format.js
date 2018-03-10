@@ -117,7 +117,7 @@ export function formatTalentDetails(result) {
     transaction: result.talent.chosenCount ? '交易记录：' + result.talent.chosenCount : '交易记录：0',
     scoreNum: result.talent.comprehensive ? result.talent.comprehensive : '0',
     score: this.getScoreStart(result.talent.comprehensive),
-    phonecall: result.talent.tel,
+    phonecall: result.talent.tel ? result.talent.tel : null,
     mypics: result.pictureList.length > 0 ? this.getTheTopN(result.pictureList, 3) : [],
     myvideos: result.mediaList.length > 0 ? this.getTheTopN(result.mediaList, 3) : [],
     introduce: result.talent.introduction,
@@ -531,8 +531,8 @@ export function formatuploadPrepay(list, reservedDate, customerName, tel, gender
     openId: openid ? openid : '',
     reservedDates: reservedDate ? reservedDate : '',
     desc: desc ? desc : '',
-    count: totalPrice ? totalPrice : '',
-    prePay: prepayPrice ? prepayPrice : ''
+    count: totalPrice ? totalPrice : 0,
+    prePay: prepayPrice ? prepayPrice : 0
   }
   var talentids = [];
 

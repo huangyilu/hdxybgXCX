@@ -145,7 +145,7 @@
 </view>
 
 <!-- foot预约 电话联系 -->
-<view class='weui-footer weui-footer_fixed-bottom appointment' wx:if='{{ tatDetl != null }}'>
+<view class='weui-footer weui-footer_fixed-bottom appointment' wx:if='{{ tatDetl != null }}' hidden='{{ tatDetl.phonecall == null }}'>
   <view class='phonecall' bindtap='bindPhoneCallTap'>
     <image src='../../images/phone.png'></image>
     <text>电话联系</text>

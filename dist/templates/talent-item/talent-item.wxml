@@ -29,7 +29,7 @@
             </view>
           </view>
           <view class='price'>
-            <text>¥ {{ talent.price }}</text>
+            <text>¥ {{ talent.price == 0 ? ' 面议 ' : talent.price }} </text>
             <!-- <view wx:if='{{ talent.freeStatus == true }}' data-talenttypeid='{{ itemSelectIndex }}' data-talentid='{{ talent.talentid }}' id='{{ index }}' data-talentinfo='{{ talent }}' class='{{ talent.selected ? "selectBtn" : "selectedBtn" }}' bindtap='bindTalentSelectTap'>{{ talent.selected ? "已选用" : "选用" }}</view>
             <view wx:if='{{ talent.freeStatus == false }}' class='notOptional-btn' >选用</view> -->
           </view>

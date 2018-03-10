@@ -8,7 +8,7 @@ import * as hoteldata from '../../utils/hoteldata-format';
 import { uniqWith, isEqual, difference } from '../../utils/npm/lodash-wx'
 import moment from '../../utils/npm/moment';
 
-import { makePayment } from '../../services/wxpay-service';
+import { makePayment, makePaymentWithO } from '../../services/wxpay-service';
 
 
 Page({
@@ -107,7 +107,8 @@ Page({
 
   checkShoppingCar(result) {
 
-    var types = ['宴会厅', '菜品', '主持人', '策划师', '摄影师', '化妆师', '宴会庆典'];
+    var types = ['宴会厅', '菜品', '主持人', '策划师', '摄影师', '化妆师'];
+    // var types = ['宴会厅', '菜品', '主持人', '策划师', '摄影师', '化妆师', '宴会庆典'];
     var shoppingtyppes = [];
     var istalent = false;
     var isCelebration = false;
@@ -122,9 +123,9 @@ Page({
       if (item.title == '婚礼人才' && item.selected == true) {
         istalent = true;
       }
-      if (item.title == '宴会庆典' && item.selected == true) {
-        isCelebration = true;
-      }
+      // if (item.title == '宴会庆典' && item.selected == true) {
+      //   isCelebration = true;
+      // }
       if (item.title == '宴会厅' && item.selected == true) {
         isBallroom = true;
       }
@@ -132,22 +133,22 @@ Page({
     })
 
     if (isBallroom) {
-      if (istalent) {
-        if (isCelebration) {
-          // 如果选了婚礼人才 没选庆典 则不可下单
-          this.setData({
-            isGetReadyMakeAppoint: true
-          })
-        } else {
-          this.setData({
-            isGetReadyMakeAppoint: false
-          })
-        }
-      } else {
-        this.setData({
-          isGetReadyMakeAppoint: true
-        })
-      }
+      // if (istalent) {
+      //   if (isCelebration) {
+      //     // 如果选了婚礼人才 没选庆典 则不可下单
+      //     this.setData({
+      //       isGetReadyMakeAppoint: true
+      //     })
+      //   } else {
+      //     this.setData({
+      //       isGetReadyMakeAppoint: false
+      //     })
+      //   }
+      // } else {
+      //   this.setData({
+      //     isGetReadyMakeAppoint: true
+      //   })
+      // }
     } else {
       this.setData({
         isGetReadyMakeAppoint: false
@@ -155,12 +156,12 @@ Page({
     }
 
     // shoppingtyppes = uniqWith(shoppingtyppes, isEqual);
-    console.log('已选的数组 shoppingtyppes...' + JSON.stringify(shoppingtyppes));
+    // console.log('已选的数组 shoppingtyppes...' + JSON.stringify(shoppingtyppes));
 
     var newTypes = difference(types, shoppingtyppes);
-    console.log('缺少的数组 new Types .. ' + JSON.stringify(newTypes));
+    // console.log('缺少的数组 new Types .. ' + JSON.stringify(newTypes));
 
-    console.log('isGetReadyMakeAppoint 状态 ...' + this.data.isGetReadyMakeAppoint);
+    // console.log('isGetReadyMakeAppoint 状态 ...' + this.data.isGetReadyMakeAppoint);
 
     this.setData({
       shoppingtypes: newTypes
@@ -440,7 +441,12 @@ Page({
         // 判断 是否 同时选了人才 和庆典 
         if (this.data.isGetReadyMakeAppoint) {
           // 上传 资料
-          this.bindUploadPrepay();
+          // 如果价钱为0时，走另一个接口
+          if (this.data.prepayPrice == 0) {
+            this.bindUploadPriceOPrepay();
+          } else {
+            this.bindUploadPrepay();
+          }
         } else {
           wx.showModal({
             title: '提示！',
@@ -519,6 +525,26 @@ Page({
 
     })
 
+  },
+  // 如果价钱为0时走另一个接口
+  bindUploadPriceOPrepay() {
+
+    var info = hoteldata.formatuploadPrepay(this.data.shoppingcarinstore, this.data.reservedDate, this.data.contacts.contact, this.data.contacts.contactInformation, this.data.contacts.gender, this.data.totalPrice, +this.data.prepayPrice, +this.data.tabNumsText, '酒店服务', this.data.packageStage.packName, this.data.packageStage.stage, this.data.packageStage.packPrice, this.data.openId);
+
+    console.log('bindUploadPriceOPrepay info ... ' + JSON.stringify(info));
+
+    makePaymentWithO(info).then((result) => {
+
+      // 跳转 我的订单 待付款
+      wx.navigateTo({
+        url: '../profile/myorder',
+      })
+      // 清空 本地购物车联系人 预定日期
+      this.removeSavedContacts();
+
+    }).catch((error) => {
+      console.log(error);
+    })
   },
   bindMissingShoppingTypesTap(e) {
 
