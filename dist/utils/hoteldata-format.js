@@ -101,7 +101,7 @@ export function formatWeddingTalentItem (item, talentname) {
     name: item.name,
     praise: item.goodReputation + '%好评',
     transaction: item.chosenCount ? '交易:' + item.chosenCount + '次' : '交易:0次',
-    price: item.price,
+    price: item.isShowPrice == '定价' ? item.price : '价格面议',
     selected: false,
     freeStatus: item.freeStatus
   }
@@ -206,7 +206,7 @@ export function formatTalentSelectCompItem (item) {
     avatar: item.headImg,
     goodCom: item.goodReputation ? item.goodReputation : 0,
     deal: item.chosenCount ? item.chosenCount : 0,
-    price: item.price,
+    price: item.isShowPrice == '定价' ? item.price : '价格面议',
     checked: false
   }
 }
@@ -322,7 +322,7 @@ export function formatBanquet(list) {
 export function formatBanquetItem(item) {
   return {
     name: item.name,
-    price: item.preprice,
+    price: item.isShowPrice == '定价' ? item.preprice : '价格面议',
     celebrationid: item.id,
     imgUrl: item.image,
     style: item.style
@@ -336,8 +336,8 @@ export function formatCelebrationDetailsCheckbox (item) {
       checked: true,
       stage: true,
       notStage: false,
-      stagePrice: item.isShowPrice == '是' ? item.stagePrice : '价格面议',
-      value: item.isShowPrice == '是' ? item.preprice : '价格面议',
+      stagePrice: item.isShowPrice == '定价' ? item.stagePrice : '价格面议',
+      value: item.isShowPrice == '定价' ? item.preprice : '价格面议',
       stagevalue: 0
     },
     {
@@ -345,8 +345,8 @@ export function formatCelebrationDetailsCheckbox (item) {
       checked: false,
       stage: false,
       notStage: false,
-      stagePrice: item.isShowPrice == '是' ? item.stagePrice : '价格面议',
-      value: item.isShowPrice == '是' ? item.price : '价格面议',
+      stagePrice: item.isShowPrice == '定价' ? item.stagePrice : '价格面议',
+      value: item.isShowPrice == '定价' ? item.price : '价格面议',
       stagevalue: 0
     }
   ]
@@ -357,9 +357,9 @@ export function formatCelebrationDetails(item) {
     showImgs: item.images,
     styles: item.style,
     theme: item.theme,
-    basicPrice: item.isShowPrice == '是' ? item.preprice : '价格面议',
+    basicPrice: item.isShowPrice == '定价' ? item.preprice : '价格面议',
     comboname: item.comboname,
-    luxuryPrice: item.isShowPrice == '是' ? item.price : '价格面议',
+    luxuryPrice: item.isShowPrice == '定价' ? item.price : '价格面议',
     celeDesc: [
       {
         name: '迎宾区',
@@ -449,7 +449,7 @@ export function formatShoppingcarItem(item, i, localTableNum) {
     floor: item.content.info.floorNum ? item.content.info.floorNum + 'F' : '',
     floorHeight: item.content.info.floorHeight ? '层高:' + item.content.info.floorHeight +'m' : '',
     tableNum: item.content.info.minTable ? item.content.info.minTable + '~' + item.content.info.maxTable + '桌' : '',
-    price: item.content.packageStage ? this.getCelebrationPrice(item.content.packageStage) : (item.content.info.price ? item.content.info.price : 0),
+    price: this.getAllItemPrice(item.content),
     nums: item.content.tableNum ? localTableNum : 1,
     finalTableNum: item.content.tableNum ? localTableNum : null,
     minTable: item.content.info.minTable ? item.content.info.minTable : null,
@@ -471,13 +471,16 @@ export function formatShoppingcarInStoreItem (item) {
   }
 }
 
-// 计算 宴会庆典 套餐 价钱
-export function getCelebrationPrice(packageStage) {
-  var price = packageStage.packPrice;
-  if (packageStage.stage) {
-    price = packageStage.packPrice + packageStage.stageprice
+// 转换 价钱
+export function getAllItemPrice(content) {
+  var price = content.info.price ? content.info.price : 0;
+  if (content.packageStage) {
+    price = content.packageStage.packPrice;
+    if (content.packageStage.stage) {
+      price = content.packageStage.packPrice + content.packageStage.stageprice
+    }
   }
-  if (packageStage.packPrice == '价格面议' || packageStage.stageprice == '价格面议') {
+  if (content.info.price == '价格面议') {
     price = 0
   }
   return price;

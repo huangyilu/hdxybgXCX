@@ -202,7 +202,6 @@ export function queryPendingCommentList (openId) {
 }
 // 关闭订单 
 export function uploadCloseUppayOrder (orderid) {
-  // return urlencodePostRequest('order/closeUnpaidOrderList', orderid)
   return jsonGetRequest('order/closeUnpaidOrderList', {
     orderId: orderid
   })
@@ -212,19 +211,6 @@ export function uploadCloseUppayOrder (orderid) {
 export function uploadComment(comtdata) {
   return urlencodePostRequest('comment/submitComment', comtdata)
 }
-
-// 付尾款
-// export function uploadFinalPay (orderId) {
-//   return jsonGetRequest('pay/payed', {
-//     orderId: orderId
-//   })
-//   retu
-// }
-
-// // 购物车 付定金 / 待付款
-// export function uploadPrepay (dic) {
-//   return urlencodePostRequest('prepay', dic)
-// }
 
 // 上传评价图片
 export function uploadCommentImg(paths) {
@@ -250,4 +236,7 @@ export function queryIsReserved(dateString, hallId) {
   })
 }
 
-// 真正支付接口
+// 我的界面 获取 背景图
+export function queryProfileBgImg() {
+  return jsonGetRequest('home/mineBg', {})
+}

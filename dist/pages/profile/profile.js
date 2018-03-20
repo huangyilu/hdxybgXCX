@@ -1,8 +1,10 @@
 // profile.js
+import * as HotelDataService from '../../services/hotel-service';
 
 Page({
   data: {
     userInfo: {},
+    profileBgimg: ''
   },
   onLoad: function (options) {
   
@@ -18,6 +20,17 @@ Page({
           data: userInfo,
         })
       }
+    })
+
+
+    HotelDataService.queryProfileBgImg().then((result) => {
+
+      this.setData({
+        profileBgimg: result
+      })
+
+    }).catch((error) => {
+      console.log(error);
     })
 
   },

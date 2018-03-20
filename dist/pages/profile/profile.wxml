@@ -2,9 +2,9 @@
 
 
 <view class='profile-body'>
-
+ 
   <!-- 头部 -->
-  <view class="userinfo">
+  <view class="userinfo" style='background-image: url({{ profileBgimg }})'>
     <view class="userinfo-bg_view" catchtap="gotoUserHome">
       <!-- 我的消息 -->
       <image class='message-view' src='../../images/message-g.png' bindtap='bindMessageTap'></image>
